@@ -150,7 +150,7 @@ function Cube (props) {
   return (
     <mesh ref={ref}>
       <SupportGeometry support={box({ size: args })} />
-      <meshStandardMaterial color='hotpink' />
+      <meshStandardMaterial color='red' />
     </mesh>
   )
 }
@@ -184,15 +184,7 @@ function App() {
           <ambientLight />
           <Cube args={[8, 1, 8]} position={[0, -0.5, 0]} kinematic />
           <Player position={[-2, 0, 0]} />
-          <mesh>
-            <SupportGeometry
-              support={hull(
-                circle({position: [0, 2, 0], radius: 1}),
-                circle({position: [0, 4, 0], radius: 0.2}),
-              )}
-            />
-            <meshStandardMaterial color='hotpink' />
-          </mesh>
+          {cubes}
         </PhysicsScene>
       </Canvas>
     </div>

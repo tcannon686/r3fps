@@ -31,7 +31,8 @@ export function PhysicsScene ({ children }) {
 }
 
 export function useBody (optionFactory, dependencies) {
-  const b = useMemo(() => body(optionFactory()), dependencies)
+  const options = useMemo(optionFactory, dependencies)
+  const b = useMemo(() => body(options), [options])
   const s = useContext(PhysicsSceneContext)
   const ref = useRef()
 
@@ -200,6 +201,52 @@ function fillSupportGeometry (geometry, support, tolerance = 0.01) {
       }
     }
   }
+  function splitFaces () {
+    const vertexToTriangles = new Map()
+    triangles.forEach(t => {
+      if (!vertexToTriangles.has(t.ia)) {
+        vertexToTriangles.set(t.ia, [])
+      }
+      if (!vertexToTriangles.has(t.ib)) {
+        vertexToTriangles.set(t.ib, [])
+      }
+      if (!vertexToTriangles.has(t.ic)) {
+        vertexToTriangles.set(t.ic, [])
+      }
+      vertexToTriangles.get(t.ia).push(t)
+      vertexToTriangles.get(t.ib).push(t)
+      vertexToTriangles.get(t.ic).push(t)
+    })
+    vertexToTriangles.forEach((triangles, index) => {
+      const connected = [[triangles[0]]]
+      triangles.forEach(t0 => {
+        for (const set of connected) {
+          const angle = Math.acos(t0.normal.dot(set[0].normal))
+          if (angle < Math.PI / 4) {
+            set.push(t0)
+            return
+          }
+        }
+        connected.push([t0])
+      })
+      for (let i = 1; i < connected.length; i++) {
+        connected[i].forEach(t => {
+          if (t.ia == index) {
+            t.ia = vertices.length
+          }
+          if (t.ib == index) {
+            t.ib = vertices.length
+          }
+          if (t.ic == index) {
+            t.ic = vertices.length
+          }
+        })
+        vertices.push(vertices[index])
+      }
+    })
+  }
+
+  splitFaces()
 
   const vertexData = new Float32Array(vertices.flatMap(x => [x.x, x.y, x.z]))
   const indexData = triangles.flatMap(t => [t.ia, t.ib, t.ic])
