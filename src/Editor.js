@@ -14,9 +14,10 @@ import {
 
 import { useIsKeyDown } from './hooks'
 
-const blueprints = {}
-function registerBlueprint(type, component, inspector) {
-  blueprints[type] = {
+const components = {}
+export function registerComponent(type, displayName, component, inspector) {
+  components[type] = {
+    displayName,
     component,
     inspector
   }
@@ -115,45 +116,27 @@ function Box (props) {
   return (
     <mesh ref={ref} {...rest}>
       <supportGeometry args={[support]} />
+      <meshStandardMaterial />
     </mesh>
   )
 }
 
-registerBlueprint('box', Box)
+registerComponent('box', 'Box', Box)
 
 function Scene ({ data }) {
   return (
     <>
-      {data.map(x => {
-        const blueprint = blueprints[x.type]
+      {data.objects.map(x => {
+        const Component = components[x.type].component
         return (
-          <blueprint {...x.props} />
+          <Component key={x.id} {...x.props} />
         )
       })}
     </>
   )
 }
 
-function ThreeView () {
-  const cubes = useMemo(() => {
-    const ret = []
-    for (let i = 0; i < 4; i ++) {
-      for (let j = 0; j < 4; j ++) {
-        for (let k = 0; k < 4; k ++) {
-          ret.push(
-            <Box
-              position={[i, j + 3, k]}
-              size={[0.5, 0.5, 0.5]}
-              key={i + ' ' + j + ' ' + k}
-              kinematic
-            />
-          )
-        }
-      }
-    }
-    return ret
-  }, [])
-
+function ThreeView ({ data }) {
   const [cameraMode, setCameraMode] = useState()
 
   const handleMouseDown = (e) => {
@@ -176,16 +159,28 @@ function ThreeView () {
       <PhysicsScene>
         <directionalLight position={[1, 3, 2]} />
         <ambientLight />
-        <Box size={[8, 1, 8]} position={[0, -0.5, 0]} kinematic />
         <EditorCamera position={[-2, 2, 0]} mode={cameraMode} />
-        {cubes}
+        <Scene data={data} />
       </PhysicsScene>
     </Canvas>
   )
 }
 
 export default function Editor () {
+  const data = {
+    objects: [
+      {
+        type: 'box',
+        id: 1,
+        props: {
+          size: [1, 1, 1],
+          position: [0, 0, 0],
+          kinematic: true
+        }
+      }
+    ]
+  }
   return (
-    <ThreeView />
+    <ThreeView data={data} />
   )
 }
