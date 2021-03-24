@@ -19,6 +19,15 @@ import {
 
 const PhysicsSceneContext = createContext(scene())
 
+export function DisablePhysics ({ children }) {
+  const s = useMemo(() => scene(), [])
+  return (
+    <PhysicsSceneContext.Provider value={s}>
+      {children}
+    </PhysicsSceneContext.Provider>
+  )
+}
+
 export function PhysicsScene ({ children }) {
   const s = useMemo(() => scene(), [])
   useFrame((state, delta) => {
@@ -31,10 +40,9 @@ export function PhysicsScene ({ children }) {
   )
 }
 
-export function useBody (options) {
+export function useBody (ref, options) {
   const b = useMemo(() => body(options), [options])
   const s = useContext(PhysicsSceneContext)
-  const ref = useRef()
 
   useEffect(() => {
     ref.current.matrixAutoUpdate = false
@@ -48,10 +56,7 @@ export function useBody (options) {
     }
   }, [b, s, ref])
 
-  return [
-    ref,
-    b
-  ]
+  return b
 }
 
 export function useContacts (body) {

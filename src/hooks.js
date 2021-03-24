@@ -23,3 +23,22 @@ export function useIsKeyDown () {
   return keyIsDown
 }
 
+/**
+ * Creates a callback function that calls the given callback by reference. This
+ * is useful when multiple components need to use the same callback, and you
+ * don't want to trigger a rerender of all the components when the callback
+ * changes. Returns the memoized callback.
+ */
+export const useRefCallback = (callback) => {
+  const ref = useRef(null)
+  const memoizedCallback = useCallback(
+    (...args) => ref.current(...args),
+    []
+  )
+
+  useEffect(() => {
+    ref.current = callback
+  }, [callback])
+
+  return memoizedCallback
+}

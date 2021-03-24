@@ -1,27 +1,90 @@
-import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
-import { Canvas, useThree, useFrame } from 'react-three-fiber'
-import { box } from 'collide'
-import { Vector3 } from 'three'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  useContext,
+  createRef,
+  createContext
+} from 'react'
+
+import { Canvas, useThree, useFrame, extend } from 'react-three-fiber'
+import { box, sphere } from 'collide'
+
+import {
+  Matrix4,
+  Vector3,
+  Vector2,
+  MeshMatcapMaterial,
+  CustomBlending,
+  OneFactor,
+  DstAlphaFactor,
+  Color,
+  TextureLoader
+} from 'three'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
+import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js'
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js'
+
+/* Material UI components. */
+import Button from '@material-ui/core/Button'
+import List from '@material-ui/core/List'
+import Grid from '@material-ui/core/Grid'
+import Tooltip from '@material-ui/core/Tooltip'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import MuiBox from '@material-ui/core/Box'
+import Fade from '@material-ui/core/Fade'
+import Drawer from '@material-ui/core/Drawer'
+import CssBaseline from '@material-ui/core/CssBaseline'
+
+import { makeStyles, useTheme } from '@material-ui/core/styles'
+
+import ListSection from './ListSection'
+
+import components from './components'
+import inspectors from './inspectors'
 
 import { useEventListener } from './hooks'
 
 import {
-  PhysicsScene,
-  useBody,
-  supportGeometry,
-  useContacts
+  DisablePhysics,
+  PhysicsScene
 } from './physics'
 
 import { useIsKeyDown } from './hooks'
 
-const components = {}
-export function registerComponent(type, displayName, component, inspector) {
-  components[type] = {
-    displayName,
-    component,
-    inspector
-  }
-}
+import { makeArrowGeometry } from './utils'
+
+extend({ EffectComposer, RenderPass, OutlinePass, ShaderPass })
+
+const drawerWidth = 320
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex'
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0
+  },
+  drawerContent: {
+    width: drawerWidth,
+    overflowX: 'hidden'
+  },
+  content: {
+    flexGrow: 1,
+    position: 'absolute',
+    left: drawerWidth,
+    top: 0,
+    right: 0,
+    bottom: 0
+  },
+}))
+
+export const SelectionContext = createContext({ selection: new Set() })
 
 function EditorCamera ({ position, mode, ...rest }) {
   const camera = useRef()
@@ -87,56 +150,211 @@ function EditorCamera ({ position, mode, ...rest }) {
   )
 }
 
-function Box (props) {
-  const {
-    size,
-    type,
-    position,
-    kinematic,
-    ...rest
-  } = props
+function useSelection () {
+  return useContext(SelectionContext).selection
+}
 
-  const [sizeX, sizeY, sizeZ] = size
-  const support = useMemo(() => (
-    box({ size: [sizeX, sizeY, sizeZ] })
-  ), [sizeX, sizeY, sizeZ])
-  const options = useMemo(() => ({
-    supports: [ support ],
-    isKinematic: kinematic
-  }), [support, kinematic])
+const arrowGeometry = makeArrowGeometry()
+function TranslateArrow ({
+  onBeginDrag,
+  onEndDrag,
+  onDrag,
+  color,
+  direction,
+  ...rest
+}) {
+  const [isHovering, setIsHovering] = useState()
+  
+  const [dx, dy, dz] = direction
+  const rotation = [
+    Math.atan2(Math.sqrt(dx ** 2 + dz ** 2), dy),
+    0,
+    Math.atan2(dx, dz)
+  ]
+  const handlePointerOver = useCallback((...args) => {
+    setIsHovering(true)
+  }, [setIsHovering])
+  const handlePointerLeave = useCallback((...args) => {
+    setIsHovering(false)
+  }, [setIsHovering])
+  const totalAmount = useRef(new Vector3())
+  
+  const ref = useRef()
 
-  const [ref, api] = useBody(options)
+  /* Dragging. */
+  const [isDragging, setIsDragging] = useState(false)
+  const handlePointerDown = useCallback((e) => {
+    e.stopPropagation()
+    e.target.setPointerCapture(e.pointerId)
+    setIsDragging(true)
+    totalAmount.current.set(0, 0, 0)
+    if (onBeginDrag) {
+      onBeginDrag()
+    }
+  }, [setIsDragging, onBeginDrag])
 
-  const [x, y, z] = position
-  useEffect(() => {
-    api.transform.setPosition(x, y, z)
-    api.update()
-  }, [api, x, y, z])
+  const handlePointerUp = useCallback((e) => {
+    e.stopPropagation()
+    e.target.releasePointerCapture(e.pointerId)
+    setIsDragging(false)
+    if (onEndDrag) {
+      onEndDrag(totalAmount.current.clone())
+    }
+  }, [setIsDragging, onEndDrag])
+
+  /* Calculating direction. */
+  const { camera, size } = useThree()
+
+  const handlePointerMove = useCallback((e) => {
+    const b = new Vector3()
+    const v = new Vector3(dx, dy, dz)
+    if (isDragging) {
+      ref.current.getWorldPosition(b)
+
+      v.add(b)
+      v.project(camera)
+      b.project(camera)
+
+      v.sub(b)
+      const len = Math.sqrt(v.x ** 2 + v.y ** 2)
+      v.multiplyScalar(1 / len)
+      const dot = (
+        2 * v.x * e.movementX / size.width
+        - 2 * v.y * e.movementY / size.height
+      )
+
+      v.multiplyScalar(dot)
+      v.add(b)
+      v.unproject(camera)
+      b.unproject(camera)
+      v.sub(b)
+
+      if (onDrag) {
+        totalAmount.current.add(v)
+        onDrag(v)
+      }
+    }
+  }, [isDragging, onDrag, camera, dx, dy, dz, size])
 
   return (
-    <mesh ref={ref} {...rest}>
-      <supportGeometry args={[support]} />
-      <meshStandardMaterial />
+    <mesh
+      geometry={arrowGeometry}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerMove={handlePointerMove}
+      onPointerOver={handlePointerOver}
+      onPointerLeave={handlePointerLeave}
+      rotation={rotation}
+      ref={ref}
+      renderOrder={1000}
+      {...rest}
+    >
+      <meshBasicMaterial
+        color={(isHovering || isDragging) ? '#ffbb22' : color}
+        depthTest={false}
+        depthWrite={false}
+      />
     </mesh>
   )
 }
 
-registerComponent('box', 'Box', Box)
+function TranslateArrows ({
+  position,
+  onDrag,
+  onBeginDrag,
+  onEndDrag
+}) {
+  const directions = [
+    [[1, 0, 0], '#ff0000'],
+    [[0, 1, 0], '#00ff00'],
+    [[0, 0, 1], '#0000ff']
+  ]
+  const ref = useRef()
 
-function Scene ({ data }) {
+  const handleDrag = useCallback((v) => {
+    if (onDrag) {
+      onDrag(v)
+    }
+  }, [onDrag])
+  const { camera } = useThree()
+
+  const worldPos = new Vector3()
+  useFrame(() => {
+    ref.current.getWorldPosition(worldPos)
+    worldPos.applyMatrix4(camera.matrixWorldInverse)
+    const scale = -0.1 * worldPos.z
+    ref.current.scale.set(scale, scale, scale)
+  })
+
+  const [x, y, z] = position
+  useEffect(() => {
+    ref.current.position.set(x, y, z)
+  }, [x, y, z])
+
   return (
-    <>
-      {data.objects.map(x => {
-        const Component = components[x.type].component
-        return (
-          <Component key={x.id} {...x.props} />
-        )
-      })}
-    </>
+    <group ref={ref}>
+      {directions.map((x, i) => (
+        <TranslateArrow
+          key={i}
+          direction={x[0]}
+          color={x[1]}
+          onDrag={handleDrag}
+          onBeginDrag={onBeginDrag}
+          onEndDrag={onEndDrag}
+        />
+      ))}
+    </group>
   )
 }
 
-function ThreeView ({ data }) {
+function makeSelectionMaterial (color) {
+  const mat = new MeshMatcapMaterial({
+    blending: CustomBlending,
+    blendSrc: OneFactor,
+    blendDst: DstAlphaFactor,
+    color: new Color().set(color),
+    transparent: true
+  })
+  const textureLoader = new TextureLoader()
+  textureLoader.load('/textures/matcap.png', (texture) => {
+    mat.matcap = texture
+    mat.matcap = texture
+  })
+  return mat
+}
+
+function useSelectionMaterial () {
+  const theme = useTheme()
+  return useMemo(() => makeSelectionMaterial(
+    theme.palette.secondary.main
+  ), [theme])
+}
+
+function SelectionRenderer () {
+  const { scene } = useThree()
+  const selectionMaterial = useSelectionMaterial()
+  const selection = useSelection()
+
+  useFrame(({ gl, scene, camera }) => {
+    gl.autoClear = false
+    gl.clear()
+    gl.render(scene, camera)
+    const originalVisibles = scene.children.map(x => x.visible)
+    scene.children.forEach(x => {
+      x.visible = selection.has(x.userData.id)
+    })
+    scene.overrideMaterial = selectionMaterial
+    gl.clearDepth()
+    gl.render(scene, camera)
+    scene.children.forEach((x, i) => {
+      x.visible = originalVisibles[i]
+    })
+    scene.overrideMaterial = null
+  }, 1)
+  return null
+}
+
+function ThreeView ({ data, onSelectionChange, onChange }) {
   const [cameraMode, setCameraMode] = useState()
 
   const handleMouseDown = (e) => {
@@ -154,33 +372,300 @@ function ThreeView ({ data }) {
     e.preventDefault()
   }
 
+  const selectionContext = useContext(SelectionContext)
+  const selection = useSelection()
+
+  const handleObjectSelected = useCallback((id) => {
+    const newSelection = new Set(selection)
+    if (newSelection.has(id)) {
+      newSelection.delete(id)
+    } else {
+      newSelection.add(id)
+    }
+    onSelectionChange(newSelection)
+  }, [selection, onSelectionChange])
+
+  const handleDrag = useCallback((amount) => {
+    const newData = {
+      ...data,
+      objects: data.objects.map(x => {
+        if (selection.has(x.id)) {
+          return {
+            ...x,
+            props: {
+              ...x.props,
+              position: x.props.position ? [
+                x.props.position[0] + amount.x,
+                x.props.position[1] + amount.y,
+                x.props.position[2] + amount.z
+              ] : [ amount.x, amount.y, amount.z ]
+            }
+          }
+        } else {
+          return x
+        }
+      })
+    }
+    onChange(newData)
+  }, [data, selection, onChange])
+
+  const keys = useEventListener('keydown', (e) => {
+    if (e.key === 'k') {
+      const newData = {
+        ...data,
+        objects: data.objects.map(x => {
+          if (selection.has(x.id)) {
+            return {
+              ...x,
+              props: {
+                ...x.props,
+                kinematic: !x.props.kinematic
+              }
+            }
+          } else {
+            return x
+          }
+        })
+      }
+      onChange(newData)
+    }
+  })
+
+  const origin = useMemo(() => {
+    const origin = new Vector3(0, 0, 0)
+    const pos = new Vector3()
+    data.objects.forEach(x => {
+      if (selection.has(x.id)) {
+        if (x.props.position) {
+          pos.set(...x.props.position)
+        } else {
+          pos.set(0, 0, 0)
+        }
+        origin.add(pos)
+      }
+    })
+    origin.multiplyScalar(1 / selection.size)
+    return origin
+  }, [data, selection])
+
   return (
     <Canvas onMouseDown={handleMouseDown} onContextMenu={handleContextMenu}>
-      <PhysicsScene>
-        <directionalLight position={[1, 3, 2]} />
-        <ambientLight />
-        <EditorCamera position={[-2, 2, 0]} mode={cameraMode} />
-        <Scene data={data} />
-      </PhysicsScene>
+      <SelectionContext.Provider value={selectionContext}>
+        <PhysicsScene>
+          <directionalLight position={[1, 3, 2]} />
+          <ambientLight />
+          <EditorCamera position={[0, 0, 2]} mode={cameraMode} />
+
+          {data.objects.map((x, i) => {
+            const Component = components[x.type].component
+            return (
+              <group
+                key={x.id}
+                userData={x}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleObjectSelected(x.id)
+                }}
+              >
+                <Component
+                  {...x.props}
+                  id={x.id}
+                />
+              </group>
+            )
+          })}
+
+          <TranslateArrows
+            onDrag={handleDrag}
+            position={[origin.x, origin.y, origin.z]}
+          />
+        </PhysicsScene>
+        <SelectionRenderer />
+      </SelectionContext.Provider>
     </Canvas>
   )
 }
 
-export default function Editor () {
-  const data = {
-    objects: [
-      {
-        type: 'box',
-        id: 1,
-        props: {
-          size: [1, 1, 1],
-          position: [0, 0, 0],
-          kinematic: true
-        }
-      }
-    ]
-  }
+function TabPanel (props) {
+  const { children, value, index, ...other } = props
+
   return (
-    <ThreeView data={data} />
+    <Fade
+      in={value === index}
+      style={{
+        display: value === index ? 'block' : 'none'
+      }}
+    >
+      <div
+        role='tabpanel'
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        <MuiBox>
+          {children}
+        </MuiBox>
+      </div>
+    </Fade>
+  )
+}
+
+function Inspector ({ data, selection, onChange }) {
+  const selectedObjects = data.objects.filter(x => selection.has(x.id))
+  const selectedInspectors = selectedObjects.map(
+    x => components[x.type].inspectors
+  )
+  const objectInspectors = selectedObjects.length > 0
+    ? selectedInspectors.reduce((a, x) => x.filter(type => a.includes(type)))
+    : []
+  return (
+    <form noValidate>
+      <List>
+        {objectInspectors.map(type => {
+          const Component = inspectors[type].component
+          return (
+            <ListSection key={type} title={inspectors[type].displayName}>
+              <Component
+                data={data}
+                selection={selection}
+                onChange={onChange}
+              />
+            </ListSection>
+          )
+        })}
+      </List>
+    </form>
+  )
+}
+
+function PaletteItem ({ onClick, text, component }) {
+  const Component = component
+  return (
+    <Grid item xs={4}>
+      <Tooltip title={`Add ${text}`}>
+        <Button onClick={onClick}>
+          <div
+            style={{
+              position: 'relative',
+              width: '1.0in',
+              height: '1.0in',
+              overflow: 'hidden'
+            }}
+          >
+            <Canvas camera={{ position: [1, 1, 1]} } invalidateFrameloop>
+              <DisablePhysics>
+                <directionalLight position={[1, 3, 2]} />
+                <ambientLight />
+                <Component />
+              </DisablePhysics>
+            </Canvas>
+          </div>
+        </Button>
+      </Tooltip>
+    </Grid>
+  )
+}
+
+function Palette ({ onSelect }) {
+  const paletteItems = useMemo(() => {
+    const ret = []
+    for (const type in components) {
+      ret.push(
+        <PaletteItem
+          key={type}
+          onClick={() => onSelect(type)}
+          text={components[type].displayName}
+          component={components[type].component}
+        />
+      )
+    }
+    return ret
+  }, [onSelect])
+  return (
+    <List>
+      <Grid container>
+        {paletteItems}
+      </Grid>
+    </List>
+  )
+}
+
+let globalId = 0
+const nextId = () => {
+  return ++globalId
+}
+
+function createObject (type, props) {
+  return {
+    type,
+    props,
+    id: nextId()
+  }
+}
+
+function EditorSidebar ({ data, onChange }) {
+  const classes = useStyles()
+  const [tab, setTab] = useState(0)
+  const selection = useSelection()
+
+  const addObject = (type) => {
+    onChange({
+      ...data,
+      objects: [
+        ...data.objects,
+        createObject(type, { kinematic: true })
+      ]
+    })
+  }
+
+  return (
+    <Drawer variant='persistent' className={classes.drawer} open>
+      <div className={classes.drawerContent}>
+        <Tabs
+          onChange={(e, value) => setTab(value)}
+          value={tab}
+          variant='fullWidth'
+        >
+          <Tab label='Palette' />
+          <Tab label='Properties' />
+        </Tabs>
+        <TabPanel value={tab} index={0}>
+          <Palette onSelect={addObject}/>
+        </TabPanel>
+        <TabPanel value={tab} index={1}>
+          <Inspector data={data} selection={selection} onChange={onChange} />
+        </TabPanel>
+      </div>
+    </Drawer>
+  )
+}
+
+export default function Editor () {
+  const [ data, setData ] = useState(() => ({
+    objects: []
+  }))
+  const [selection, setSelection] = useState(new Set())
+  const selectionContext = {
+    selection
+  }
+
+  const classes = useStyles()
+
+  return (
+    <div className={classes.root}>
+      <SelectionContext.Provider value={selectionContext}>
+        <CssBaseline />
+        <EditorSidebar data={data} onChange={setData} />
+        <main className={classes.content}>
+          <ThreeView
+            data={data}
+            onSelectionChange={setSelection}
+            onChange={(newData) => {
+              setData(newData)
+            }}
+          />
+        </main>
+      </SelectionContext.Provider>
+    </div>
   )
 }

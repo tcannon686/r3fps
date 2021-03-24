@@ -13,7 +13,8 @@ function Player (props) {
   const speed = 3
   const jumpSpeed = 3
 
-  const [ref, api] = useBody(() => ({
+  const ref = useRef()
+  const api = useBody(ref, () => ({
     supports: [
       hull(
         sphere({ radius: 0.5 }),
