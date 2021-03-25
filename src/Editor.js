@@ -367,7 +367,6 @@ function SelectionRenderer () {
       x.visible = selection.has(x.userData.id)
     })
     scene.overrideMaterial = selectionMaterial
-    gl.clearDepth()
     gl.render(scene, camera)
     scene.children.forEach((x, i) => {
       x.visible = originalVisibles[i]
