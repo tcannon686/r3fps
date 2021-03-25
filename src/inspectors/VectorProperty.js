@@ -51,6 +51,10 @@ export default function VectorProperty ({
   }
 
   const handleBlur = () => {
+    if (pos.some(x => isNaN(x))) {
+      setPos(origin)
+      return
+    }
     const newData = {
       ...data,
       objects: data.objects.map(object => {

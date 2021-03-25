@@ -2,6 +2,7 @@ import Position from './Position'
 import BoxSize from './BoxSize'
 import SphereSize from './SphereSize'
 import Body from './Body'
+import Rotation from './Rotation'
 
 const inspectors = {
   'position': {
@@ -19,6 +20,10 @@ const inspectors = {
   'body': {
     displayName: 'Body',
     component: Body
+  },
+  'rotation': {
+    displayName: 'Rotation',
+    component: Rotation
   }
 }
 

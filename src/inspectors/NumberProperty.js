@@ -49,6 +49,10 @@ export default function NumberProperty ({
   }, [origin])
 
   const handleBlur = () => {
+    if (isNaN(pos)) {
+      setPos(origin)
+      return
+    }
     const newData = {
       ...data,
       objects: data.objects.map(object => {

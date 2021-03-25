@@ -9,16 +9,23 @@ import {
   useSupportGeometry,
 } from '../physics'
 
+import {
+  Matrix4,
+  Euler
+} from 'three'
+
 export default function Brush ({
   id,
   support,
-  size,
   position,
+  rotation,
   kinematic,
   userData,
   ...rest
 }) {
+  /* Default values. */
   position = position || [0.0, 0.0, 0.0]
+  rotation = rotation || [0.0, 0.0, 0.0]
 
   const options = useMemo(() => ({
     supports: [ support ],
@@ -28,12 +35,20 @@ export default function Brush ({
   const ref = useRef()
   const api = useBody(ref, options)
 
+  const [rx, ry, rz] = rotation
   const [x, y, z] = position
   useEffect(() => {
+    api.transform.identity()
+    api.transform.multiply(
+      new Matrix4().makeRotationFromEuler(new Euler(
+        rx * Math.PI / 180,
+        ry * Math.PI / 180,
+        rz * Math.PI / 180))
+    )
     api.transform.setPosition(x, y, z)
     api.velocity.set(0, 0, 0)
     api.update()
-  }, [api, x, y, z])
+  }, [api, x, y, z, rx, ry, rz])
 
   const geometry = useSupportGeometry(support)
 
