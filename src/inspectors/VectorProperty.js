@@ -5,7 +5,7 @@ import {
 } from 'react'
 
 /* Material UI components. */
-import Box from '@material-ui/core/Box'
+import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 
 import { makeStyles } from '@material-ui/core/styles'
@@ -14,14 +14,6 @@ import {
   Vector3,
 } from 'three'
 
-const useStyles = makeStyles((theme) => ({
-  evenlySpaced: {
-    '& > *': {
-      margin: theme.spacing(1)
-    }
-  }
-}))
-
 export default function VectorProperty ({
   selection,
   data,
@@ -29,8 +21,6 @@ export default function VectorProperty ({
   prop,
   defaultValue
 }) {
-  const classes = useStyles()
-
   const origin = useMemo(() => {
     const origin = new Vector3()
     const pos = new Vector3()
@@ -85,18 +75,18 @@ export default function VectorProperty ({
   }
 
   return (
-    <Box className={classes.evenlySpaced}>
+    <Grid container spacing={1}>
       {['x', 'y', 'z'].map((x, i) => (
-        <TextField
-          key={x}
-          fullWidth
-          label={x.toUpperCase()}
-          variant='filled'
-          value={pos[i]}
-          onChange={(e) => setComponent(i, e.target.value)}
-          onBlur={handleBlur}
-        />
+        <Grid item key={x} xs={4}>
+          <TextField
+            label={x.toUpperCase()}
+            variant='filled'
+            value={pos[i]}
+            onChange={(e) => setComponent(i, e.target.value)}
+            onBlur={handleBlur}
+          />
+        </Grid>
       ))}
-    </Box>
+    </Grid>
   )
 }
