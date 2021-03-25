@@ -1,8 +1,11 @@
 import { sphere, hull } from 'collide'
 import { useThree, useFrame } from 'react-three-fiber'
 import { useCallback, useEffect, useRef } from 'react'
+import { useBody, useContacts } from 'physics'
+import { useEventListener, useIsKeyDown } from 'hooks'
+import { Vector3 } from 'three'
 
-function Player (props) {
+export default function Player (props) {
   const camera = useRef()
   const rotationHelper = useRef()
   const { setDefaultCamera } = useThree()
@@ -18,7 +21,7 @@ function Player (props) {
     supports: [
       hull(
         sphere({ radius: 0.5 }),
-        sphere({ position: [0, -1, 0], radius: 0.5})
+        sphere({ position: [0, -1, 0], radius: 0.5 })
       )
     ]
   }), [])
@@ -53,32 +56,32 @@ function Player (props) {
     camera.current.updateMatrixWorld()
     rotationHelper.current.matrixWorld.extractBasis(right, up, forward)
     forward.negate()
-    if (keyIsDown.current['E']) {
+    if (keyIsDown.current.E) {
       api.position.addScaledVector(up, dt * speed)
       api.transform.setPosition(api.position)
       api.update()
     }
-    if (keyIsDown.current['Q']) {
+    if (keyIsDown.current.Q) {
       api.position.addScaledVector(up, -dt * speed)
       api.transform.setPosition(api.position)
       api.update()
     }
-    if (keyIsDown.current['D']) {
+    if (keyIsDown.current.D) {
       api.position.addScaledVector(right, dt * speed)
       api.transform.setPosition(api.position)
       api.update()
     }
-    if (keyIsDown.current['A']) {
+    if (keyIsDown.current.A) {
       api.position.addScaledVector(right, -dt * speed)
       api.transform.setPosition(api.position)
       api.update()
     }
-    if (keyIsDown.current['W']) {
+    if (keyIsDown.current.W) {
       api.position.addScaledVector(forward, dt * speed)
       api.transform.setPosition(api.position)
       api.update()
     }
-    if (keyIsDown.current['S']) {
+    if (keyIsDown.current.S) {
       api.position.addScaledVector(forward, -dt * speed)
       api.transform.setPosition(api.position)
       api.update()
@@ -95,11 +98,10 @@ function Player (props) {
   })
 
   return (
-    <group ref={ref}>
+    <group ref={ref} {...rest}>
       <group ref={rotationHelper}>
-        <perspectiveCamera ref={camera}/>
+        <perspectiveCamera ref={camera} />
       </group>
     </group>
   )
 }
-

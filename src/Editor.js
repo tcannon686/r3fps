@@ -5,24 +5,20 @@ import {
   useState,
   useMemo,
   useContext,
-  createRef,
   createContext
 } from 'react'
 
 import { Canvas, useThree, useFrame } from 'react-three-fiber'
-import { box, sphere } from 'collide'
 
 import {
-  Matrix4,
   Vector3,
-  Vector2,
   MeshMatcapMaterial,
   CustomBlending,
   OneFactor,
   DstAlphaFactor,
   Color,
   TextureLoader,
-  Scene,
+  Scene
 } from 'three'
 
 /* Material UI components. */
@@ -44,14 +40,12 @@ import ListSection from './ListSection'
 import components from './components'
 import inspectors from './inspectors'
 
-import { useEventListener } from './hooks'
+import { useEventListener, useIsKeyDown } from './hooks'
 
 import {
   DisablePhysics,
   PhysicsScene
 } from './physics'
-
-import { useIsKeyDown } from './hooks'
 
 import { makeArrowGeometry } from './utils'
 
@@ -75,7 +69,7 @@ const useStyles = makeStyles(theme => ({
     top: 0,
     right: 0,
     bottom: 0
-  },
+  }
 }))
 
 export const SelectionContext = createContext({ selection: new Set() })
@@ -116,22 +110,22 @@ function EditorCamera ({ position, mode, ...rest }) {
     if (mode === 'fps') {
       camera.current.matrixWorld.extractBasis(right, up, forward)
       forward.negate()
-      if (keyIsDown.current['E']) {
+      if (keyIsDown.current.E) {
         rotationHelper.current.position.addScaledVector(up, dt * speed)
       }
-      if (keyIsDown.current['Q']) {
+      if (keyIsDown.current.Q) {
         rotationHelper.current.position.addScaledVector(up, -dt * speed)
       }
-      if (keyIsDown.current['D']) {
+      if (keyIsDown.current.D) {
         rotationHelper.current.position.addScaledVector(right, dt * speed)
       }
-      if (keyIsDown.current['A']) {
+      if (keyIsDown.current.A) {
         rotationHelper.current.position.addScaledVector(right, -dt * speed)
       }
-      if (keyIsDown.current['W']) {
+      if (keyIsDown.current.W) {
         rotationHelper.current.position.addScaledVector(forward, dt * speed)
       }
-      if (keyIsDown.current['S']) {
+      if (keyIsDown.current.S) {
         rotationHelper.current.position.addScaledVector(forward, -dt * speed)
       }
     }
@@ -139,7 +133,7 @@ function EditorCamera ({ position, mode, ...rest }) {
 
   return (
     <group ref={rotationHelper}>
-      <perspectiveCamera ref={camera}/>
+      <perspectiveCamera ref={camera} />
     </group>
   )
 }
@@ -158,7 +152,7 @@ function TranslateArrow ({
   ...rest
 }) {
   const [isHovering, setIsHovering] = useState()
-  
+
   const [dx, dy, dz] = direction
   const rotation = [
     Math.atan2(Math.sqrt(dx ** 2 + dz ** 2), dy),
@@ -172,7 +166,7 @@ function TranslateArrow ({
     setIsHovering(false)
   }, [setIsHovering])
   const totalAmount = useRef(new Vector3())
-  
+
   const ref = useRef()
 
   /* Dragging. */
@@ -213,8 +207,8 @@ function TranslateArrow ({
       const len = Math.sqrt(v.x ** 2 + v.y ** 2)
       v.multiplyScalar(1 / len)
       const dot = (
-        2 * v.x * e.movementX / size.width
-        - 2 * v.y * e.movementY / size.height
+        2 * v.x * e.movementX / size.width -
+        2 * v.y * e.movementY / size.height
       )
 
       v.multiplyScalar(dot)
@@ -354,7 +348,6 @@ function useSelectionMaterial () {
 }
 
 function SelectionRenderer () {
-  const { scene } = useThree()
   const selectionMaterial = useSelectionMaterial()
   const selection = useSelection()
 
@@ -416,11 +409,15 @@ function ThreeView ({ data, onSelectionChange, onChange }) {
             ...x,
             props: {
               ...x.props,
-              position: x.props.position ? [
-                x.props.position[0] + amount.x,
-                x.props.position[1] + amount.y,
-                x.props.position[2] + amount.z
-              ] : [ amount.x, amount.y, amount.z ]
+              position: (
+                x.props.position
+                  ? [
+                      x.props.position[0] + amount.x,
+                      x.props.position[1] + amount.y,
+                      x.props.position[2] + amount.z
+                    ]
+                  : [amount.x, amount.y, amount.z]
+              )
             }
           }
         } else {
@@ -430,28 +427,6 @@ function ThreeView ({ data, onSelectionChange, onChange }) {
     }
     onChange(newData)
   }, [data, selection, onChange])
-
-  const keys = useEventListener('keydown', (e) => {
-    if (e.key === 'k') {
-      const newData = {
-        ...data,
-        objects: data.objects.map(x => {
-          if (selection.has(x.id)) {
-            return {
-              ...x,
-              props: {
-                ...x.props,
-                kinematic: !x.props.kinematic
-              }
-            }
-          } else {
-            return x
-          }
-        })
-      }
-      onChange(newData)
-    }
-  })
 
   const origin = useMemo(() => {
     const origin = new Vector3(0, 0, 0)
@@ -574,7 +549,7 @@ function PaletteItem ({ onClick, text, component }) {
               overflow: 'hidden'
             }}
           >
-            <Canvas camera={{ position: [1, 1, 1]} } invalidateFrameloop>
+            <Canvas camera={{ position: [1, 1, 1] }} invalidateFrameloop>
               <DisablePhysics>
                 <directionalLight position={[1, 3, 2]} />
                 <ambientLight />
@@ -652,7 +627,7 @@ function EditorSidebar ({ data, onChange }) {
           <Tab label='Properties' />
         </Tabs>
         <TabPanel value={tab} index={0}>
-          <Palette onSelect={addObject}/>
+          <Palette onSelect={addObject} />
         </TabPanel>
         <TabPanel value={tab} index={1}>
           <Inspector data={data} selection={selection} onChange={onChange} />
@@ -663,7 +638,7 @@ function EditorSidebar ({ data, onChange }) {
 }
 
 export default function Editor () {
-  const [ data, setData ] = useState(() => ({
+  const [data, setData] = useState(() => ({
     objects: []
   }))
   const [selection, setSelection] = useState(new Set())

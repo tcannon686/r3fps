@@ -8,10 +8,8 @@ import {
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 
-import { makeStyles } from '@material-ui/core/styles'
-
 import {
-  Vector3,
+  Vector3
 } from 'three'
 
 export default function VectorProperty ({
@@ -60,7 +58,7 @@ export default function VectorProperty ({
       objects: data.objects.map(object => {
         if (selection.has(object.id)) {
           const position = object.props[prop] || defaultValue
-          for (let i = 0; i < position.length; i ++) {
+          for (let i = 0; i < position.length; i++) {
             position[i] += pos[i] - origin[i]
           }
           return {

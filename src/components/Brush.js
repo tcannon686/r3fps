@@ -6,7 +6,7 @@ import {
 
 import {
   useBody,
-  useSupportGeometry,
+  useSupportGeometry
 } from '../physics'
 
 import {
@@ -28,7 +28,7 @@ export default function Brush ({
   rotation = rotation || [0.0, 0.0, 0.0]
 
   const options = useMemo(() => ({
-    supports: [ support ],
+    supports: [support],
     isKinematic: kinematic
   }), [support, kinematic])
 

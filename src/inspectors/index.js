@@ -5,23 +5,23 @@ import Body from './Body'
 import Rotation from './Rotation'
 
 const inspectors = {
-  'position': {
+  position: {
     displayName: 'Position',
     component: Position
   },
-  'boxSize': {
+  boxSize: {
     displayName: 'Size',
     component: BoxSize
   },
-  'sphereSize': {
+  sphereSize: {
     displayName: 'Size',
     component: SphereSize
   },
-  'body': {
+  body: {
     displayName: 'Body',
     component: Body
   },
-  'rotation': {
+  rotation: {
     displayName: 'Rotation',
     component: Rotation
   }

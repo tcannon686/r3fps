@@ -18,4 +18,3 @@ export default function Box ({ size, ...rest }) {
     <Brush support={support} {...rest} />
   )
 }
-

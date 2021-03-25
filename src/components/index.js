@@ -2,12 +2,12 @@ import Box from './Box'
 import Sphere from './Sphere'
 
 const components = {
-  'box': {
+  box: {
     displayName: 'Box',
     component: Box,
     inspectors: ['position', 'rotation', 'boxSize', 'body']
   },
-  'sphere': {
+  sphere: {
     displayName: 'Sphere',
     component: Sphere,
     inspectors: ['position', 'rotation', 'sphereSize', 'body']

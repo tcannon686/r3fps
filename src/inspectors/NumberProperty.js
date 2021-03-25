@@ -59,8 +59,8 @@ export default function NumberProperty ({
         if (selection.has(object.id)) {
           let position = (
             object.props[prop] !== undefined
-            ? object.props[prop]
-            : defaultValue
+              ? object.props[prop]
+              : defaultValue
           )
           position += pos - origin
           return {

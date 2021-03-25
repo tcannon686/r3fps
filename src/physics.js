@@ -7,7 +7,7 @@ import {
   useMemo
 } from 'react'
 
-import { useFrame, useUpdate } from 'react-three-fiber'
+import { useFrame } from 'react-three-fiber'
 
 import { scene, body } from 'collide'
 
@@ -238,13 +238,13 @@ function makeSupportGeometry (support) {
       })
       for (let i = 1; i < connected.length; i++) {
         connected[i].forEach(t => {
-          if (t.ia == index) {
+          if (t.ia === index) {
             t.ia = vertices.length
           }
-          if (t.ib == index) {
+          if (t.ib === index) {
             t.ib = vertices.length
           }
-          if (t.ic == index) {
+          if (t.ic === index) {
             t.ic = vertices.length
           }
         })

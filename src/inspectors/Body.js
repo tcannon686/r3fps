@@ -11,7 +11,7 @@ export default function Body ({
       selection={selection}
       data={data}
       onChange={onChange}
-      defaultValue={true}
+      defaultValue
       label='Kinematic'
     />
   )

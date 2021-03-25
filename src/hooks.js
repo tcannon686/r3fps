@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react'
 
-export function useEventListener(type, callback) {
+export function useEventListener (type, callback) {
   useEffect(() => {
     document.addEventListener(type, callback)
     return () => {

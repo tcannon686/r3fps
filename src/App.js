@@ -1,12 +1,12 @@
-import './App.css';
+import './App.css'
 import Editor from './Editor'
 
-function App() {
+function App () {
   return (
     <div className='App'>
       <Editor />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
