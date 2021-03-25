@@ -74,7 +74,6 @@ export default function BooleanProperty ({
       <FormControlLabel
         control={
           <Checkbox
-            fullWidth
             variant='filled'
             checked={value}
             onChange={handleChange}
