@@ -1,5 +1,6 @@
 import Box from './Box'
 import Sphere from './Sphere'
+import PointLight from './PointLight'
 
 const components = {
   box: {
@@ -11,6 +12,11 @@ const components = {
     displayName: 'Sphere',
     component: Sphere,
     inspectors: ['position', 'rotation', 'scale', 'sphereSize', 'body']
+  },
+  pointLight: {
+    displayName: 'Point Light',
+    component: PointLight,
+    inspectors: ['position', 'color']
   }
 }
 export default components

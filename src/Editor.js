@@ -462,8 +462,6 @@ function ThreeView ({ data, onSelectionChange, onChange }) {
     <Canvas onMouseDown={handleMouseDown} onContextMenu={handleContextMenu}>
       <SelectionContext.Provider value={selectionContext}>
         <PhysicsScene>
-          <directionalLight position={[1, 3, 2]} />
-          <ambientLight />
           <EditorCamera position={[0, 0, 2]} mode={cameraMode} />
 
           {data.objects.map((x, i) => {
@@ -479,7 +477,6 @@ function ThreeView ({ data, onSelectionChange, onChange }) {
               >
                 <Component
                   {...x.props}
-                  id={x.id}
                 />
               </group>
             )

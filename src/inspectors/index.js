@@ -4,6 +4,7 @@ import SphereSize from './SphereSize'
 import Body from './Body'
 import Rotation from './Rotation'
 import Scale from './Scale'
+import Color from './Color'
 
 const inspectors = {
   position: {
@@ -29,6 +30,10 @@ const inspectors = {
   scale: {
     displayName: 'Scale',
     component: Scale
+  },
+  color: {
+    displayName: 'Color',
+    component: Color
   }
 }
 

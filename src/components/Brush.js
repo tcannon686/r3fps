@@ -15,7 +15,6 @@ import {
 } from 'three'
 
 export default function Brush ({
-  id,
   support,
   position,
   rotation,
