@@ -19,6 +19,7 @@ export default function Brush ({
   support,
   position,
   rotation,
+  scale,
   kinematic,
   userData,
   ...rest
@@ -26,6 +27,7 @@ export default function Brush ({
   /* Default values. */
   position = position || [0.0, 0.0, 0.0]
   rotation = rotation || [0.0, 0.0, 0.0]
+  scale = scale || [1.0, 1.0, 1.0]
 
   const options = useMemo(() => ({
     supports: [support],
@@ -36,6 +38,7 @@ export default function Brush ({
   const api = useBody(ref, options)
 
   const [rx, ry, rz] = rotation
+  const [sx, sy, sz] = scale
   const [x, y, z] = position
   useEffect(() => {
     api.transform.identity()
@@ -45,10 +48,13 @@ export default function Brush ({
         ry * Math.PI / 180,
         rz * Math.PI / 180))
     )
+    api.transform.multiply(
+      new Matrix4().makeScale(sx, sy, sz)
+    )
     api.transform.setPosition(x, y, z)
     api.velocity.set(0, 0, 0)
     api.update()
-  }, [api, x, y, z, rx, ry, rz])
+  }, [api, x, y, z, rx, ry, rz, sx, sy, sz])
 
   const geometry = useSupportGeometry(support)
 
