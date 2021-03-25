@@ -5,12 +5,12 @@ const components = {
   'box': {
     displayName: 'Box',
     component: Box,
-    inspectors: ['position', 'boxSize']
+    inspectors: ['position', 'boxSize', 'body']
   },
   'sphere': {
     displayName: 'Sphere',
     component: Sphere,
-    inspectors: ['position', 'sphereSize']
+    inspectors: ['position', 'sphereSize', 'body']
   }
 }
 export default components
