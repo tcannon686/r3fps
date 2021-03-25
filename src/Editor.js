@@ -445,6 +445,19 @@ function ThreeView ({ data, onSelectionChange, onChange }) {
     return origin
   }, [data, selection])
 
+  useEventListener('keyup', (e) => {
+    /* Handle delete. */
+    if (e.key === 'Delete') {
+      if (e.target === document.body) {
+        onChange({
+          ...data,
+          objects: data.objects.filter(x => !selection.has(x.id))
+        })
+        onSelectionChange(new Set())
+      }
+    }
+  })
+
   return (
     <Canvas onMouseDown={handleMouseDown} onContextMenu={handleContextMenu}>
       <SelectionContext.Provider value={selectionContext}>
