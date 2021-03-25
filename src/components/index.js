@@ -1,6 +1,8 @@
 import Box from './Box'
 import Sphere from './Sphere'
 import PointLight from './PointLight'
+import AmbientLight from './AmbientLight'
+import DirectionalLight from './DirectionalLight'
 
 const components = {
   box: {
@@ -16,6 +18,16 @@ const components = {
   pointLight: {
     displayName: 'Point Light',
     component: PointLight,
+    inspectors: ['position', 'color']
+  },
+  ambientLight: {
+    displayName: 'Ambient Light',
+    component: AmbientLight,
+    inspectors: ['position', 'color']
+  },
+  directionalLight: {
+    displayName: 'Directional Light',
+    component: DirectionalLight,
     inspectors: ['position', 'color']
   }
 }
