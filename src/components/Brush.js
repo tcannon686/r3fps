@@ -6,7 +6,7 @@ import {
 
 import {
   useBody,
-  SupportGeometry,
+  useSupportGeometry,
 } from '../physics'
 
 export default function Brush ({
@@ -35,9 +35,10 @@ export default function Brush ({
     api.update()
   }, [api, x, y, z])
 
+  const geometry = useSupportGeometry(support)
+
   return (
-    <mesh ref={ref} {...rest}>
-      <SupportGeometry support={support} />
+    <mesh ref={ref} geometry={geometry} {...rest}>
       <meshStandardMaterial />
     </mesh>
   )
