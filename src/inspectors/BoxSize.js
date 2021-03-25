@@ -1,17 +1,17 @@
 import VectorProperty from './VectorProperty'
 
-export default function Position ({
+export default function BoxSize ({
   selection,
   data,
   onChange
 }) {
   return (
     <VectorProperty
-      prop='position'
+      prop='size'
       selection={selection}
       data={data}
       onChange={onChange}
-      defaultValue={[0, 0, 0]}
+      defaultValue={[1, 1, 1]}
     />
   )
 }

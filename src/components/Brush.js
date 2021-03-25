@@ -6,7 +6,7 @@ import {
 
 import {
   useBody,
-  supportGeometry,
+  SupportGeometry,
 } from '../physics'
 
 export default function Brush ({
@@ -35,14 +35,9 @@ export default function Brush ({
     api.update()
   }, [api, x, y, z])
 
-  userData = {
-    ...userData,
-    id
-  }
-
   return (
-    <mesh ref={ref} {...rest} userData={userData}>
-      <supportGeometry args={[support]} />
+    <mesh ref={ref} {...rest}>
+      <SupportGeometry support={support} />
       <meshStandardMaterial />
     </mesh>
   )

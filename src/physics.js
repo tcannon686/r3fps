@@ -7,7 +7,7 @@ import {
   useMemo
 } from 'react'
 
-import { useFrame, extend } from 'react-three-fiber'
+import { useFrame, useUpdate } from 'react-three-fiber'
 
 import { scene, body } from 'collide'
 
@@ -90,9 +90,9 @@ function randomizeDirection (d) {
 /*
  * Basically the expanding polytope algorithm, but with some extra steps.
  */
-export class SupportGeometry extends BufferGeometry {
-  constructor (support, tolerance = 0.01) {
-    super()
+export function SupportGeometry ({ support }) {
+  const ref = useUpdate((geometry) => {
+    const tolerance = 0.01
 
     const triangles = []
     const vertices = []
@@ -209,6 +209,7 @@ export class SupportGeometry extends BufferGeometry {
         }
       }
     }
+
     function splitFaces () {
       const vertexToTriangles = new Map()
       triangles.forEach(t => {
@@ -259,11 +260,14 @@ export class SupportGeometry extends BufferGeometry {
     const vertexData = new Float32Array(vertices.flatMap(x => [x.x, x.y, x.z]))
     const indexData = triangles.flatMap(t => [t.ia, t.ib, t.ic])
 
-    this.setAttribute('position', new BufferAttribute(vertexData, 3))
-    this.setIndex(indexData)
-    this.computeVertexNormals()
-    this.computeBoundingSphere()
-  }
+    geometry.setAttribute('position', new BufferAttribute(vertexData, 3))
+    geometry.setIndex(indexData)
+    geometry.deleteAttribute('normal')
+    geometry.computeVertexNormals()
+    geometry.attributes.normal.needsUpdate = true
+    geometry.computeBoundingSphere()
+  }, [support])
+  return (
+    <bufferGeometry ref={ref} />
+  )
 }
-
-extend({ SupportGeometry })

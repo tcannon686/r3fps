@@ -9,7 +9,7 @@ import {
   createContext
 } from 'react'
 
-import { Canvas, useThree, useFrame, extend } from 'react-three-fiber'
+import { Canvas, useThree, useFrame } from 'react-three-fiber'
 import { box, sphere } from 'collide'
 
 import {
@@ -21,13 +21,9 @@ import {
   OneFactor,
   DstAlphaFactor,
   Color,
-  TextureLoader
+  TextureLoader,
+  Scene,
 } from 'three'
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
-import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js'
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
-import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js'
 
 /* Material UI components. */
 import Button from '@material-ui/core/Button'
@@ -58,8 +54,6 @@ import {
 import { useIsKeyDown } from './hooks'
 
 import { makeArrowGeometry } from './utils'
-
-extend({ EffectComposer, RenderPass, OutlinePass, ShaderPass })
 
 const drawerWidth = 320
 const useStyles = makeStyles(theme => ({
@@ -251,8 +245,6 @@ function TranslateArrow ({
     >
       <meshBasicMaterial
         color={(isHovering || isDragging) ? '#ffbb22' : color}
-        depthTest={false}
-        depthWrite={false}
       />
     </mesh>
   )
@@ -270,13 +262,37 @@ function TranslateArrows ({
     [[0, 0, 1], '#0000ff']
   ]
   const ref = useRef()
+  const arrowScene = useMemo(() => new Scene(), [])
+
+  const [isDragging, setIsDragging] = useState(false)
+  const handleBeginDrag = useCallback(() => {
+    setIsDragging(true)
+    if (onBeginDrag) {
+      onBeginDrag()
+    }
+  }, [setIsDragging, onEndDrag])
+  const handleEndDrag = useCallback((amount) => {
+    setIsDragging(false)
+    if (onEndDrag) {
+      onEndDrag(amount)
+    }
+  }, [setIsDragging, onEndDrag])
 
   const handleDrag = useCallback((v) => {
     if (onDrag) {
       onDrag(v)
     }
   }, [onDrag])
-  const { camera } = useThree()
+  const { camera, gl, scene, raycaster } = useThree()
+
+  useEffect(() => {
+    /* Disable the raycaster while dragging. */
+    if (isDragging) {
+      raycaster.layers.disableAll()
+    } else {
+      raycaster.layers.enableAll()
+    }
+  }, [raycaster, isDragging])
 
   const worldPos = new Vector3()
   useFrame(() => {
@@ -284,7 +300,14 @@ function TranslateArrows ({
     worldPos.applyMatrix4(camera.matrixWorldInverse)
     const scale = -0.1 * worldPos.z
     ref.current.scale.set(scale, scale, scale)
-  })
+    gl.clearDepth()
+    gl.render(arrowScene, camera)
+  }, 2)
+
+  useEffect(() => {
+    arrowScene.clear()
+    arrowScene.add(ref.current)
+  }, [scene, ref])
 
   const [x, y, z] = position
   useEffect(() => {
@@ -299,8 +322,8 @@ function TranslateArrows ({
           direction={x[0]}
           color={x[1]}
           onDrag={handleDrag}
-          onBeginDrag={onBeginDrag}
-          onEndDrag={onEndDrag}
+          onBeginDrag={handleBeginDrag}
+          onEndDrag={handleEndDrag}
         />
       ))}
     </group>
