@@ -270,7 +270,7 @@ function TranslateArrows ({
     if (onBeginDrag) {
       onBeginDrag()
     }
-  }, [setIsDragging, onEndDrag])
+  }, [setIsDragging, onBeginDrag])
   const handleEndDrag = useCallback((amount) => {
     setIsDragging(false)
     if (onEndDrag) {
@@ -307,7 +307,7 @@ function TranslateArrows ({
   useEffect(() => {
     arrowScene.clear()
     arrowScene.add(ref.current)
-  }, [scene, ref])
+  }, [scene, ref, arrowScene])
 
   const [x, y, z] = position
   useEffect(() => {
