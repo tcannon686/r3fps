@@ -33,7 +33,7 @@ export default function BooleanProperty ({
     let origin = defaultValue
     data.objects.forEach(x => {
       if (selection.has(x.id)) {
-        if (x.props[prop]) {
+        if (x.props[prop] !== undefined) {
           origin = x.props[prop]
         }
       }

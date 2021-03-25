@@ -32,7 +32,7 @@ export default function NumberProperty ({
     let origin = 0
     data.objects.forEach(x => {
       if (selection.has(x.id)) {
-        if (x.props[prop]) {
+        if (x.props[prop] !== undefined) {
           origin += x.props[prop]
         } else {
           origin += defaultValue
@@ -57,7 +57,11 @@ export default function NumberProperty ({
       ...data,
       objects: data.objects.map(object => {
         if (selection.has(object.id)) {
-          let position = object.props[prop] || defaultValue
+          let position = (
+            object.props[prop] !== undefined
+            ? object.props[prop]
+            : defaultValue
+          )
           position += pos - origin
           return {
             ...object,
