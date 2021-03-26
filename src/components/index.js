@@ -1,5 +1,6 @@
 import Box from './Box'
 import Sphere from './Sphere'
+import Cylinder from './Cylinder'
 import PointLight from './PointLight'
 import AmbientLight from './AmbientLight'
 import DirectionalLight from './DirectionalLight'
@@ -14,6 +15,11 @@ const components = {
     displayName: 'Sphere',
     component: Sphere,
     inspectors: ['position', 'rotation', 'scale', 'sphereSize', 'body']
+  },
+  cylinder: {
+    displayName: 'Cylinder',
+    component: Cylinder,
+    inspectors: ['position', 'rotation', 'scale', 'cylinderSize', 'body']
   },
   pointLight: {
     displayName: 'Point Light',

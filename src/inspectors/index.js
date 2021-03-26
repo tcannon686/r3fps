@@ -1,6 +1,7 @@
 import Position from './Position'
 import BoxSize from './BoxSize'
 import SphereSize from './SphereSize'
+import CylinderSize from './CylinderSize'
 import Body from './Body'
 import Rotation from './Rotation'
 import Scale from './Scale'
@@ -18,6 +19,10 @@ const inspectors = {
   sphereSize: {
     displayName: 'Size',
     component: SphereSize
+  },
+  cylinderSize: {
+    displayName: 'Size',
+    component: CylinderSize
   },
   body: {
     displayName: 'Body',
