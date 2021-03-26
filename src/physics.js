@@ -228,7 +228,10 @@ function makeSupportGeometry (support) {
       const connected = [[triangles[0]]]
       triangles.forEach(t0 => {
         for (const set of connected) {
-          const angle = Math.acos(t0.normal.dot(set[0].normal))
+          const dot = t0.normal.dot(set[0].normal)
+          const angle = Math.acos(
+            Math.max(-1, Math.min(1, dot))
+          )
           if (angle < Math.PI / 4) {
             set.push(t0)
             return
