@@ -4,7 +4,7 @@ import {
 
 import {
   sphere
-} from 'collide'
+} from 'tcollide'
 
 import Brush from './Brush'
 

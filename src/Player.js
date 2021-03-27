@@ -1,4 +1,4 @@
-import { sphere, hull } from 'collide'
+import { sphere, hull } from 'tcollide'
 import { useThree, useFrame } from 'react-three-fiber'
 import { useCallback, useEffect, useRef } from 'react'
 import { useBody, useContacts } from 'physics'

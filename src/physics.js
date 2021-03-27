@@ -9,7 +9,7 @@ import {
 
 import { useFrame } from 'react-three-fiber'
 
-import { scene, body } from 'collide'
+import { scene, body } from 'tcollide'
 
 import {
   Vector3,
@@ -17,10 +17,10 @@ import {
   BufferGeometry
 } from 'three'
 
-const PhysicsSceneContext = createContext(scene())
+const PhysicsSceneContext = createContext(scene({}))
 
 export function DisablePhysics ({ children }) {
-  const s = useMemo(() => scene(), [])
+  const s = useMemo(() => scene({}), [])
   return (
     <PhysicsSceneContext.Provider value={s}>
       {children}
@@ -29,7 +29,7 @@ export function DisablePhysics ({ children }) {
 }
 
 export function PhysicsScene ({ children }) {
-  const s = useMemo(() => scene(), [])
+  const s = useMemo(() => scene({}), [])
   useFrame((state, delta) => {
     s.update(Math.min(delta, 0.1))
   })

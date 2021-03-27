@@ -4,7 +4,7 @@ import {
 
 import {
   box
-} from 'collide'
+} from 'tcollide'
 
 import Brush from './Brush'
 

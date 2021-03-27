@@ -5,7 +5,7 @@ import {
 import {
   hull,
   circle
-} from 'collide'
+} from 'tcollide'
 
 import Brush from './Brush'
 
