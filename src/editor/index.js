@@ -37,10 +37,11 @@ import { makeStyles, useTheme } from '@material-ui/core/styles'
 
 import ListSection from './ListSection'
 
+import Camera from './Camera'
 import components from '../game/components'
 import inspectors from '../game/inspectors'
 
-import { useEventListener, useIsKeyDown } from '../hooks'
+import { useEventListener } from '../hooks'
 
 import {
   DisablePhysics,
@@ -73,70 +74,6 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export const SelectionContext = createContext({ selection: new Set() })
-
-function EditorCamera ({ position, mode, ...rest }) {
-  const camera = useRef()
-  const rotationHelper = useRef()
-  const { setDefaultCamera } = useThree()
-  const speed = 3
-
-  /* Handle mouselook. */
-  const handleMouseMove = useCallback((e) => {
-    if (mode === 'fps') {
-      camera.current.rotation.x -= e.movementY * 0.005
-      rotationHelper.current.rotation.y -= e.movementX * 0.005
-    }
-  }, [mode])
-  useEventListener('mousemove', handleMouseMove)
-
-  const keyIsDown = useIsKeyDown()
-
-  useEffect(() => {
-    setDefaultCamera(camera.current)
-  }, [setDefaultCamera])
-
-  const [x, y, z] = position
-  useEffect(() => {
-    rotationHelper.current.position.set(x, y, z)
-  }, [x, y, z])
-
-  const right = new Vector3()
-  const up = new Vector3()
-  const forward = new Vector3()
-
-  useFrame((state, dt) => {
-    /* Update the camera. */
-    camera.current.updateMatrixWorld()
-    if (mode === 'fps') {
-      camera.current.matrixWorld.extractBasis(right, up, forward)
-      forward.negate()
-      if (keyIsDown.current.E) {
-        rotationHelper.current.position.addScaledVector(up, dt * speed)
-      }
-      if (keyIsDown.current.Q) {
-        rotationHelper.current.position.addScaledVector(up, -dt * speed)
-      }
-      if (keyIsDown.current.D) {
-        rotationHelper.current.position.addScaledVector(right, dt * speed)
-      }
-      if (keyIsDown.current.A) {
-        rotationHelper.current.position.addScaledVector(right, -dt * speed)
-      }
-      if (keyIsDown.current.W) {
-        rotationHelper.current.position.addScaledVector(forward, dt * speed)
-      }
-      if (keyIsDown.current.S) {
-        rotationHelper.current.position.addScaledVector(forward, -dt * speed)
-      }
-    }
-  })
-
-  return (
-    <group ref={rotationHelper}>
-      <perspectiveCamera ref={camera} />
-    </group>
-  )
-}
 
 function useSelection () {
   return useContext(SelectionContext).selection
@@ -369,7 +306,7 @@ function SelectionRenderer () {
   return null
 }
 
-function ThreeView ({ data, onSelectionChange, onChange }) {
+function ThreeView ({ data, onSelectionChange, onChange, cameraRef }) {
   const [cameraMode, setCameraMode] = useState()
 
   const handleMouseDown = (e) => {
@@ -462,7 +399,11 @@ function ThreeView ({ data, onSelectionChange, onChange }) {
     <Canvas onMouseDown={handleMouseDown} onContextMenu={handleContextMenu}>
       <SelectionContext.Provider value={selectionContext}>
         <PhysicsScene>
-          <EditorCamera position={[0, 0, 2]} mode={cameraMode} />
+          <Camera
+            position={[0, 0, 2]}
+            mode={cameraMode}
+            ref={cameraRef}
+          />
 
           {data.objects.map((x, i) => {
             const Component = components[x.type].component
@@ -610,17 +551,35 @@ function createObject (type, props) {
   }
 }
 
-function EditorSidebar ({ data, onChange }) {
+function EditorSidebar ({ data, onChange, camera }) {
   const classes = useStyles()
   const [tab, setTab] = useState(0)
   const selection = useSelection()
 
   const addObject = (type) => {
+    const right = new Vector3()
+    const up = new Vector3()
+    const forward = new Vector3()
+    const cameraPosition = new Vector3()
+    camera.current.matrixWorld.extractBasis(right, up, forward)
+    camera.current.getWorldPosition(cameraPosition)
+    forward.negate()
+
+    /* Create the object in front of the camera. */
+    const position = [
+      cameraPosition.x + forward.x * 4,
+      cameraPosition.y + forward.y * 4,
+      cameraPosition.z + forward.z * 4
+    ]
+
     onChange({
       ...data,
       objects: [
         ...data.objects,
-        createObject(type, { kinematic: true })
+        createObject(
+          type,
+          { kinematic: true, position }
+        )
       ]
     })
   }
@@ -654,14 +613,20 @@ export function Editor ({ data, onChange }) {
   }
 
   const classes = useStyles()
+  const cameraRef = useRef()
 
   return (
     <div className={classes.root}>
       <SelectionContext.Provider value={selectionContext}>
         <CssBaseline />
-        <EditorSidebar data={data} onChange={onChange} />
+        <EditorSidebar
+          data={data}
+          onChange={onChange}
+          camera={cameraRef}
+        />
         <main className={classes.content}>
           <ThreeView
+            cameraRef={cameraRef}
             data={data}
             onSelectionChange={setSelection}
             onChange={(newData) => {
