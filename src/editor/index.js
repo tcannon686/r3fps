@@ -647,10 +647,7 @@ function EditorSidebar ({ data, onChange }) {
   )
 }
 
-export function Editor () {
-  const [data, setData] = useState(() => ({
-    objects: []
-  }))
+export function Editor ({ data, onChange }) {
   const [selection, setSelection] = useState(new Set())
   const selectionContext = {
     selection
@@ -662,13 +659,13 @@ export function Editor () {
     <div className={classes.root}>
       <SelectionContext.Provider value={selectionContext}>
         <CssBaseline />
-        <EditorSidebar data={data} onChange={setData} />
+        <EditorSidebar data={data} onChange={onChange} />
         <main className={classes.content}>
           <ThreeView
             data={data}
             onSelectionChange={setSelection}
             onChange={(newData) => {
-              setData(newData)
+              onChange(newData)
             }}
           />
         </main>

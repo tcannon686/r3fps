@@ -1,8 +1,8 @@
 import { sphere, hull } from 'tcollide'
 import { useThree, useFrame } from 'react-three-fiber'
-import { useCallback, useEffect, useRef } from 'react'
-import { useBody, useContacts } from 'physics'
-import { useEventListener, useIsKeyDown } from 'hooks'
+import { useCallback, useEffect, useRef, useMemo } from 'react'
+import { useBody, useContacts } from '../physics'
+import { useEventListener, useIsKeyDown } from '../hooks'
 import { Vector3 } from 'three'
 
 export default function Player (props) {
@@ -17,7 +17,7 @@ export default function Player (props) {
   const jumpSpeed = 3
 
   const ref = useRef()
-  const api = useBody(ref, () => ({
+  const options = useMemo(() => ({
     supports: [
       hull(
         sphere({ radius: 0.5 }),
@@ -25,6 +25,7 @@ export default function Player (props) {
       )
     ]
   }), [])
+  const api = useBody(ref, options)
 
   const [x, y, z] = position
   useEffect(() => {
