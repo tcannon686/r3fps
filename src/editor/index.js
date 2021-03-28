@@ -37,17 +37,17 @@ import { makeStyles, useTheme } from '@material-ui/core/styles'
 
 import ListSection from './ListSection'
 
-import components from './components'
-import inspectors from './inspectors'
+import components from '../game/components'
+import inspectors from '../game/inspectors'
 
-import { useEventListener, useIsKeyDown } from './hooks'
+import { useEventListener, useIsKeyDown } from '../hooks'
 
 import {
   DisablePhysics,
   PhysicsScene
-} from './physics'
+} from '../physics'
 
-import { makeArrowGeometry } from './utils'
+import { makeArrowGeometry } from '../utils'
 
 const drawerWidth = 320
 const useStyles = makeStyles(theme => ({
@@ -647,7 +647,7 @@ function EditorSidebar ({ data, onChange }) {
   )
 }
 
-export default function Editor () {
+export function Editor () {
   const [data, setData] = useState(() => ({
     objects: []
   }))

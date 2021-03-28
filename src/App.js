@@ -1,5 +1,4 @@
-import './App.css'
-import Editor from './Editor'
+import { Editor } from './editor'
 
 function App () {
   return (

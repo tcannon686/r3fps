@@ -7,7 +7,7 @@ import {
 import {
   useBody,
   useSupportGeometry
-} from '../physics'
+} from '../../physics'
 
 import {
   Matrix4,
