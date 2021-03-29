@@ -395,8 +395,16 @@ function ThreeView ({ data, onSelectionChange, onChange, cameraRef }) {
     }
   })
 
+  const handlePointerMissed = () => {
+    onSelectionChange(new Set())
+  }
+
   return (
-    <Canvas onMouseDown={handleMouseDown} onContextMenu={handleContextMenu}>
+    <Canvas
+      onMouseDown={handleMouseDown}
+      onContextMenu={handleContextMenu}
+      onPointerMissed={handlePointerMissed}
+    >
       <SelectionContext.Provider value={selectionContext}>
         <PhysicsScene>
           <Camera
