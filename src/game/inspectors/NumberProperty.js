@@ -45,7 +45,7 @@ export default function NumberProperty ({
 
   const [pos, setPos] = useState(defaultValue)
   useEffect(() => {
-    setPos(origin)
+    setPos(Math.round(origin * 1000) / 1000)
   }, [origin])
 
   const handleBlur = () => {
