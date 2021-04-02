@@ -17,8 +17,9 @@ import {
 /* Game components. */
 import components from '../game/components'
 
-function PaletteItem ({ onClick, text, component }) {
+function PaletteItem ({ onClick, text, component, distance }) {
   const Component = component
+  const d = (1 / Math.sqrt(3)) * distance
   return (
     <Grid item xs={4}>
       <Tooltip title={`Add ${text}`}>
@@ -31,7 +32,10 @@ function PaletteItem ({ onClick, text, component }) {
               overflow: 'hidden'
             }}
           >
-            <Canvas camera={{ position: [1, 1, 1] }} invalidateFrameloop>
+            <Canvas
+              camera={{ position: [d, d, d] }}
+              invalidateFrameloop
+            >
               <DisablePhysics>
                 <directionalLight position={[1, 3, 2]} />
                 <ambientLight />
@@ -55,6 +59,7 @@ export default function Palette ({ onSelect }) {
           onClick={() => onSelect(type)}
           text={components[type].displayName}
           component={components[type].component}
+          distance={components[type].distance || 2}
         />
       )
     }

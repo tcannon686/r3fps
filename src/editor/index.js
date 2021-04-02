@@ -25,6 +25,7 @@ import ThreeView from './ThreeView'
 
 /* Game. */
 import { object } from '../game'
+import components from '../game/components'
 
 const drawerWidth = 320
 const useStyles = makeStyles(theme => ({
@@ -64,10 +65,11 @@ function EditorSidebar ({ data, onChange, selection, camera }) {
     forward.negate()
 
     /* Create the object in front of the camera. */
+    const distance = (components[type].distance || 2.0)
     const position = [
-      cameraPosition.x + forward.x * 4,
-      cameraPosition.y + forward.y * 4,
-      cameraPosition.z + forward.z * 4
+      cameraPosition.x + forward.x * distance,
+      cameraPosition.y + forward.y * distance,
+      cameraPosition.z + forward.z * distance
     ]
 
     onChange({
