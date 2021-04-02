@@ -58,7 +58,14 @@ export default function Brush ({
   const geometry = useSupportGeometry(support)
 
   return (
-    <mesh ref={ref} geometry={geometry} {...rest}>
+    <mesh
+      ref={ref}
+      geometry={geometry}
+      position={position}
+      rotation={rotation}
+      scale={scale}
+      {...rest}
+    >
       <meshStandardMaterial />
     </mesh>
   )
