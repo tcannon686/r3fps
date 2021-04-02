@@ -5,6 +5,31 @@ import {
 } from '../physics'
 import Player from './Player'
 
+let globalId = 0
+const nextId = () => {
+  return ++globalId
+}
+
+/**
+ * Create an empty game scene.
+ */
+export function scene () {
+  return {
+    objects: []
+  }
+}
+
+/**
+ * Create an object with the specified type and properties.
+ */
+export function object ({ type, props }) {
+  return {
+    type,
+    props,
+    id: nextId()
+  }
+}
+
 export function Game ({ data }) {
   return (
     <Canvas onClick={e => e.target.requestPointerLock()}>

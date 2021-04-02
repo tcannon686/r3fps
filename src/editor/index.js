@@ -23,6 +23,9 @@ import Palette from './Palette'
 import TabPanel from './TabPanel'
 import ThreeView from './ThreeView'
 
+/* Game. */
+import { object } from '../game'
+
 const drawerWidth = 320
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,19 +48,6 @@ const useStyles = makeStyles(theme => ({
     bottom: 0
   }
 }))
-
-let globalId = 0
-const nextId = () => {
-  return ++globalId
-}
-
-function createObject (type, props) {
-  return {
-    type,
-    props,
-    id: nextId()
-  }
-}
 
 function EditorSidebar ({ data, onChange, selection, camera }) {
   const classes = useStyles()
@@ -84,10 +74,10 @@ function EditorSidebar ({ data, onChange, selection, camera }) {
       ...data,
       objects: [
         ...data.objects,
-        createObject(
+        object({
           type,
-          { kinematic: true, position }
-        )
+          props: { kinematic: true, position }
+        })
       ]
     })
   }
