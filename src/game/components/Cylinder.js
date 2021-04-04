@@ -7,7 +7,7 @@ import {
   circle
 } from 'tcollide'
 
-import Brush from './Brush'
+import RoundBrush from './RoundBrush'
 
 export default function Cylinder ({ height, r1, r2, ...rest }) {
   /* Default values. */
@@ -28,6 +28,6 @@ export default function Cylinder ({ height, r1, r2, ...rest }) {
     )
   ), [height, r1, r2])
   return (
-    <Brush support={support} {...rest} />
+    <RoundBrush support={support} {...rest} />
   )
 }

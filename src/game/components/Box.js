@@ -6,7 +6,7 @@ import {
   box
 } from 'tcollide'
 
-import Brush from './Brush'
+import RoundBrush from './RoundBrush'
 
 export default function Box ({ size, ...rest }) {
   size = size || [1.0, 1.0, 1.0]
@@ -15,6 +15,6 @@ export default function Box ({ size, ...rest }) {
     box({ size: [sizeX, sizeY, sizeZ] })
   ), [sizeX, sizeY, sizeZ])
   return (
-    <Brush support={support} {...rest} />
+    <RoundBrush support={support} {...rest} />
   )
 }

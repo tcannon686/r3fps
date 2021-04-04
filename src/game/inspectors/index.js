@@ -2,6 +2,7 @@ import Position from './Position'
 import BoxSize from './BoxSize'
 import SphereSize from './SphereSize'
 import CylinderSize from './CylinderSize'
+import RoundBrush from './RoundBrush'
 import Body from './Body'
 import Rotation from './Rotation'
 import Scale from './Scale'
@@ -39,7 +40,19 @@ const inspectors = {
   color: {
     displayName: 'Color',
     component: Color
+  },
+  roundBrush: {
+    displayName: 'Round Brush',
+    component: RoundBrush
   }
 }
+
+const mixins = {
+  transform: ['position', 'rotation', 'scale'],
+  brush: ['position', 'rotation', 'scale', 'body'],
+  roundBrush: ['position', 'rotation', 'scale', 'body', 'roundBrush']
+}
+
+export { mixins }
 
 export default inspectors

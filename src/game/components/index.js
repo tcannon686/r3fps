@@ -5,11 +5,13 @@ import PointLight from './PointLight'
 import AmbientLight from './AmbientLight'
 import DirectionalLight from './DirectionalLight'
 
+import { mixins } from '../inspectors'
+
 const components = {
   box: {
     displayName: 'Box',
     component: Box,
-    inspectors: ['position', 'rotation', 'scale', 'boxSize', 'body']
+    inspectors: [...mixins.roundBrush, 'boxSize']
   },
   sphere: {
     displayName: 'Sphere',
@@ -19,7 +21,7 @@ const components = {
   cylinder: {
     displayName: 'Cylinder',
     component: Cylinder,
-    inspectors: ['position', 'rotation', 'scale', 'cylinderSize', 'body']
+    inspectors: [...mixins.roundBrush, 'cylinderSize']
   },
   pointLight: {
     displayName: 'Point Light',
