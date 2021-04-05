@@ -9953,9 +9953,9 @@ run-queue@^1.0.0, run-queue@^1.0.3:
     aproba "^1.1.1"
 
 rxjs@^6.6.6:
-  version "6.6.6"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.6.tgz#14d8417aa5a07c5e633995b525e1e3c0dec03b70"
-  integrity sha512-/oTwee4N4iWzAMAL9xdGKjkEHmIwupR3oXbQjCKywF1BeFohswF3vZdogbmEF6pZkOsXTzWkrZszrWpQTByYVg==
+  version "6.6.7"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.7.tgz#90ac018acabf491bf65044235d5863c4dab804c9"
+  integrity sha512-hTdwr+7yYNIT5n4AMYp85KA6yw2Va0FLa3Rguvbpa4W3I5xynaBZo41cM3XM+4Q6fRMj3sBYIR1VAmZMXYJvRQ==
   dependencies:
     tslib "^1.9.0"
 
@@ -10837,10 +10837,10 @@ tar@^6.0.2:
     mkdirp "^1.0.3"
     yallist "^4.0.0"
 
-tcollide@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/tcollide/-/tcollide-0.1.0.tgz#de09a2b954328f76bec94bd086bc33498dcc4cca"
-  integrity sha512-Ath7ZaG8I6/iEk0hh3/qGc8XVPwHtKAv55NQtGQhLt0YdMMvcjlPnkQNuJNZCSnIu/unDGBiigzJ3vfavQQGyQ==
+tcollide@0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/tcollide/-/tcollide-0.2.1.tgz#a0ecebba6d99fd0a43b05ec079c864e98f745d4b"
+  integrity sha512-BHtiDfIBFxWSi9Q9cFKwJsR78WmiAexKTrLRssfxvYQh3gdSiSYbIwt4PxkdvWLg8AcCvUOYmlpLaVsv7hmRoA==
   dependencies:
     rxjs "^6.6.6"
     three "^0.125.2"
