@@ -133,22 +133,18 @@ export default function TranslateArrows ({
 }) {
   const ref = useRef()
 
-  const [isDragging, setIsDragging] = useState(false)
-
   /* Callbacks. */
   const handleBeginDrag = useCallback(() => {
-    setIsDragging(true)
     if (onBeginDrag) {
       onBeginDrag()
     }
-  }, [setIsDragging, onBeginDrag])
+  }, [onBeginDrag])
 
   const handleEndDrag = useCallback((amount) => {
-    setIsDragging(false)
     if (onEndDrag) {
       onEndDrag(amount)
     }
-  }, [setIsDragging, onEndDrag])
+  }, [onEndDrag])
 
   const handleDrag = useCallback((v) => {
     if (onDrag) {
@@ -156,16 +152,7 @@ export default function TranslateArrows ({
     }
   }, [onDrag])
 
-  const { camera, gl, scene, raycaster } = useThree()
-
-  useEffect(() => {
-    /* Disable the raycaster while dragging. */
-    if (isDragging) {
-      raycaster.layers.disableAll()
-    } else {
-      raycaster.layers.enableAll()
-    }
-  }, [raycaster, isDragging])
+  const { camera, gl, scene } = useThree()
 
   /*
    * Add the arrows to its own scene so that they can be rendered on top of the

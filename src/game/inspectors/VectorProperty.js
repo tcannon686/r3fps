@@ -57,7 +57,7 @@ export default function VectorProperty ({
       ...data,
       objects: data.objects.map(object => {
         if (selection.has(object.id)) {
-          const position = object.props[prop] || defaultValue
+          const position = [...(object.props[prop] || defaultValue)]
           for (let i = 0; i < position.length; i++) {
             position[i] += pos[i] - origin[i]
           }

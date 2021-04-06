@@ -24,8 +24,11 @@ import TabPanel from './TabPanel'
 import ThreeView from './ThreeView'
 
 /* Game. */
-import { object } from '../game'
+import { scene, object } from '../game'
 import components from '../game/components'
+
+/* Hooks */
+import { useUndoable, useKeyboardShortcut } from '../hooks'
 
 const drawerWidth = 320
 const useStyles = makeStyles(theme => ({
@@ -106,11 +109,25 @@ function EditorSidebar ({ data, onChange, selection, camera }) {
   )
 }
 
-export function Editor ({ data, onChange }) {
+export function Editor () {
+  const [data, pushData, undo, redo, setData] = useUndoable(() => scene({}))
   const [selection, setSelection] = useState(new Set())
 
   const classes = useStyles()
   const cameraRef = useRef()
+
+  /* When the data is changed, updated it, but not update the undo history. */
+  const handleChange = (newData) => {
+    setData(newData)
+  }
+
+  /* When an edit is made, update the undo history. */
+  const handleEdit = (newData) => {
+    pushData(newData)
+  }
+
+  useKeyboardShortcut(['Control', 'Z'], undo)
+  useKeyboardShortcut(['Control', 'Shift', 'Z'], redo)
 
   return (
     <div className={classes.root}>
@@ -118,7 +135,7 @@ export function Editor ({ data, onChange }) {
       <EditorSidebar
         data={data}
         selection={selection}
-        onChange={onChange}
+        onChange={handleEdit}
         camera={cameraRef}
       />
       <main className={classes.content}>
@@ -127,9 +144,8 @@ export function Editor ({ data, onChange }) {
           data={data}
           selection={selection}
           onSelectionChange={setSelection}
-          onChange={(newData) => {
-            onChange(newData)
-          }}
+          onChange={handleChange}
+          onEdit={handleEdit}
         />
       </main>
     </div>

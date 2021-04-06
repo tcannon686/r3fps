@@ -34,6 +34,7 @@ export default function ThreeView ({
   selection,
   onSelectionChange,
   onChange,
+  onEdit,
   cameraRef
 }) {
   const [cameraMode, setCameraMode] = useState()
@@ -70,7 +71,7 @@ export default function ThreeView ({
   }, [onSelectionChange])
 
   /* Movement. */
-  const handleDrag = useCallback((amount) => {
+  const moveSelection = useCallback((amount) => {
     const newData = {
       ...data,
       objects: data.objects.map(x => {
@@ -100,8 +101,23 @@ export default function ThreeView ({
         }
       })
     }
-    onChange(newData)
-  }, [data, selection, onChange])
+    return newData
+  }, [data, selection])
+
+  /* Dragging. */
+  const [isDragging, setIsDragging] = useState(false)
+  const handleBeginDrag = useCallback(() => {
+    setIsDragging(true)
+  }, [setIsDragging])
+
+  const handleDrag = useCallback((amount) => {
+    onChange(moveSelection(amount))
+  }, [moveSelection, onChange])
+
+  const handleEndDrag = useCallback(() => {
+    onEdit(data)
+    setIsDragging(false)
+  }, [data, onEdit, setIsDragging])
 
   const origin = useMemo(() => {
     const origin = new Vector3(0, 0, 0)
@@ -141,9 +157,11 @@ export default function ThreeView ({
       <group
         key={x.id}
         userData={x}
-        onClick={(e) => {
+        onPointerUp={(e) => {
           e.stopPropagation()
-          handleObjectSelected(x.id)
+          if (!isDragging && cameraMode !== 'fps') {
+            handleObjectSelected(x.id)
+          }
         }}
       >
         <Component
@@ -168,6 +186,8 @@ export default function ThreeView ({
         {gameComponents}
         <TranslateArrows
           onDrag={handleDrag}
+          onBeginDrag={handleBeginDrag}
+          onEndDrag={handleEndDrag}
           position={[origin.x, origin.y, origin.z]}
         />
       </PhysicsScene>
