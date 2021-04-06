@@ -1,3 +1,26 @@
+# r3fps
+
+r3fps is a simple scene editor and soon-to-be game created using
+[react-three-fiber](https://github.com/pmndrs/react-three-fiber), [Material
+UI](https://material-ui.com/), and
+[tcollide](https://github.com/tcannon686/tcollide) (my own library for collision
+detection).  At the moment, you can place simple shapes known as "brushes", and
+modify their properties in the inspector, or by dragging them around with some
+arrows. You can enable physics for different brushes by unchecking _Kinematic_
+in the _Inspector_. You can also place a few different kinds of lights, and
+position them in the scene, and change their color.
+
+## Usage
+Set up using the guide below, then open up the project in a browser. You should
+be able to place objects by clicking them in the _Palette_ tab. Next, you can
+click on objects to select them. Modify their properties by clicking the
+_Inspector_ tab, or by moving them around with the arrows in the 3D view. Right
+click and drag in the 3D view to rotate the camera. While moving the camera, you
+can use WASD to move around, and E to move up and Q to move down. Press the
+Delete key to delete selected objects. You can also undo and redo by pressing
+Control-Z and Control-Shift-Z.
+
+---
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
