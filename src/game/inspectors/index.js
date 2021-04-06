@@ -49,8 +49,8 @@ const inspectors = {
 
 const mixins = {
   transform: ['position', 'rotation', 'scale'],
-  brush: ['position', 'rotation', 'scale', 'body'],
-  roundBrush: ['position', 'rotation', 'scale', 'body', 'roundBrush']
+  brush: ['position', 'rotation', 'scale', 'body', 'color'],
+  roundBrush: ['position', 'rotation', 'scale', 'body', 'roundBrush', 'color']
 }
 
 export { mixins }

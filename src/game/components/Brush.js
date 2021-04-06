@@ -21,6 +21,7 @@ export default function Brush ({
   scale,
   kinematic,
   userData,
+  color,
   ...rest
 }) {
   /* Default values. */
@@ -66,7 +67,9 @@ export default function Brush ({
       scale={scale}
       {...rest}
     >
-      <meshStandardMaterial />
+      <meshStandardMaterial
+        color={color}
+      />
     </mesh>
   )
 }

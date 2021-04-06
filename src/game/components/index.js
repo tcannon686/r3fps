@@ -16,7 +16,7 @@ const components = {
   sphere: {
     displayName: 'Sphere',
     component: Sphere,
-    inspectors: ['position', 'rotation', 'scale', 'sphereSize', 'body']
+    inspectors: [...mixins.brush, 'sphereSize', 'body']
   },
   cylinder: {
     displayName: 'Cylinder',
