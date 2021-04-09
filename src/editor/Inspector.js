@@ -3,7 +3,6 @@ import List from '@material-ui/core/List'
 
 /* Game components. */
 import components from '../game/components'
-import inspectors from '../game/inspectors'
 
 /* Editor components. */
 import ListSection from './ListSection'
@@ -14,15 +13,17 @@ export default function Inspector ({ data, selection, onChange }) {
     x => components[x.type].inspectors
   )
   const objectInspectors = selectedObjects.length > 0
-    ? selectedInspectors.reduce((a, x) => x.filter(type => a.includes(type)))
+    ? selectedInspectors.reduce((a, x) => x.filter(
+        inspector => a.includes(inspector))
+      )
     : []
   return (
     <form noValidate>
       <List>
-        {objectInspectors.map(type => {
-          const Component = inspectors[type].component
+        {objectInspectors.map(inspector => {
+          const Component = inspector.component
           return (
-            <ListSection key={type} title={inspectors[type].displayName}>
+            <ListSection key={inspector.key} title={inspector.displayName}>
               <Component
                 data={data}
                 selection={selection}
