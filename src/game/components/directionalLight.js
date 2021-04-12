@@ -4,15 +4,17 @@ const component = {
   key: 'directionalLight',
   displayName: 'Directional Light',
   inspectors: [...mixins.light],
-  component ({ position, color, ...rest }) {
+  component ({ position, color, inEditor, ...rest }) {
     color = color || '#ffffff'
     position = position || [0, 0, 0]
     return (
       <group position={position}>
-        <mesh>
-          <meshBasicMaterial color={color} />
-          <sphereGeometry args={[0.25, 16, 8]} />
-        </mesh>
+        {inEditor && (
+          <mesh>
+            <meshBasicMaterial color={color} />
+            <sphereGeometry args={[0.25, 16, 8]} />
+          </mesh>
+        )}
         <directionalLight color={color} {...rest} />
       </group>
     )

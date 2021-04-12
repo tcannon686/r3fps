@@ -166,6 +166,7 @@ export default function ThreeView ({
       >
         <Component
           {...x.props}
+          inEditor
         />
       </group>
     )

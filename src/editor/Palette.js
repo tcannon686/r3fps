@@ -39,7 +39,7 @@ function PaletteItem ({ onClick, text, component, distance }) {
               <DisablePhysics>
                 <directionalLight position={[1, 3, 2]} />
                 <ambientLight />
-                <Component />
+                <Component inEditor />
               </DisablePhysics>
             </Canvas>
           </div>
