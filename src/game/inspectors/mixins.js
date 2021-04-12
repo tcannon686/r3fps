@@ -8,5 +8,6 @@ import roundBrushInspector from './roundBrush'
 const transform = [position, rotation, scale]
 const brush = [position, rotation, scale, body, color]
 const roundBrush = [...brush, roundBrushInspector]
+const light = [position, color]
 
-export { transform, brush, roundBrush }
+export { transform, brush, roundBrush, light }

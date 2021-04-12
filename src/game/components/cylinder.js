@@ -9,7 +9,10 @@ import {
 
 import RoundBrush from './RoundBrush'
 
-export default function Cylinder ({ height, r1, r2, ...rest }) {
+import * as mixins from '../inspectors/mixins'
+import cylinderSize from '../inspectors/cylinderSize'
+
+function Cylinder ({ height, r1, r2, ...rest }) {
   /* Default values. */
   r1 = r1 || 0.5
   r2 = r2 || 0.5
@@ -31,3 +34,12 @@ export default function Cylinder ({ height, r1, r2, ...rest }) {
     <RoundBrush support={support} {...rest} />
   )
 }
+
+const component = {
+  key: 'cylinder',
+  displayName: 'Cylinder',
+  inspectors: [...mixins.roundBrush, cylinderSize],
+  component: Cylinder
+}
+
+export default component

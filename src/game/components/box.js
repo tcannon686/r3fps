@@ -8,7 +8,10 @@ import {
 
 import RoundBrush from './RoundBrush'
 
-export default function Box ({ size, ...rest }) {
+import * as mixins from '../inspectors/mixins'
+import boxSize from '../inspectors/boxSize'
+
+function Box ({ size, ...rest }) {
   size = size || [1.0, 1.0, 1.0]
   const [sizeX, sizeY, sizeZ] = size
   const support = useMemo(() => (
@@ -18,3 +21,12 @@ export default function Box ({ size, ...rest }) {
     <RoundBrush support={support} {...rest} />
   )
 }
+
+const component = {
+  key: 'box',
+  displayName: 'Box',
+  inspectors: [...mixins.roundBrush, boxSize],
+  component: Box
+}
+
+export default component
