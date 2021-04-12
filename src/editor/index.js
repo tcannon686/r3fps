@@ -144,6 +144,7 @@ function EditorSidebar ({ data, onChange, selection, camera }) {
 export function Editor () {
   const [data, pushData, undo, redo, setData] = useUndoable(() => scene({}))
   const [selection, setSelection] = useState(new Set())
+  const [clipboardData, setClipboardData] = useState([])
 
   const classes = useStyles()
   const cameraRef = useRef()
@@ -158,8 +159,25 @@ export function Editor () {
     pushData(newData)
   }
 
+  const selectedObjects = data.objects.filter(x => selection.has(x.id))
+  const copy = () => {
+    setClipboardData(selectedObjects)
+  }
+  const paste = () => {
+    const objects = [
+      ...data.objects,
+      ...clipboardData.map(object)
+    ]
+    pushData({
+      ...data,
+      objects
+    })
+  }
+
   useKeyboardShortcut(['Control', 'Z'], undo)
   useKeyboardShortcut(['Control', 'Shift', 'Z'], redo)
+  useKeyboardShortcut(['Control', 'C'], copy)
+  useKeyboardShortcut(['Control', 'V'], paste)
 
   return (
     <div className={classes.root}>
