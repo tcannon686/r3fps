@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid'
 import { Canvas } from 'react-three-fiber'
 import components from './components'
 import {
@@ -5,9 +6,8 @@ import {
 } from '../physics'
 import Player from './Player'
 
-let globalId = 0
 const nextId = () => {
-  return ++globalId
+  return uuid()
 }
 
 /**

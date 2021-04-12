@@ -10,10 +10,17 @@ import {
 } from 'three'
 
 /* Material UI components. */
+import Button from '@material-ui/core/Button'
+import Toolbar from '@material-ui/core/Toolbar'
+import Tooltip from '@material-ui/core/Tooltip'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import Drawer from '@material-ui/core/Drawer'
 import CssBaseline from '@material-ui/core/CssBaseline'
+
+/* Material UI icons. */
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
+import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -27,8 +34,11 @@ import ThreeView from './ThreeView'
 import { scene, object } from '../game'
 import components from '../game/components'
 
-/* Hooks */
+/* Hooks. */
 import { useUndoable, useKeyboardShortcut } from '../hooks'
+
+/* Utils. */
+import { download, upload } from '../utils'
 
 const drawerWidth = 320
 const useStyles = makeStyles(theme => ({
@@ -87,9 +97,31 @@ function EditorSidebar ({ data, onChange, selection, camera }) {
     })
   }
 
+  const handleDownload = () => {
+    download('scene.json', JSON.stringify(data))
+  }
+
+  const handleUpload = () => {
+    upload()
+      .then(data => JSON.parse(data))
+      .then(data => onChange(data))
+  }
+
   return (
     <Drawer variant='persistent' className={classes.drawer} open>
       <div className={classes.drawerContent}>
+        <Toolbar>
+          <Tooltip title='Download' onClick={handleDownload}>
+            <Button>
+              <CloudDownloadIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title='Upload'>
+            <Button onClick={handleUpload}>
+              <CloudUploadIcon />
+            </Button>
+          </Tooltip>
+        </Toolbar>
         <Tabs
           onChange={(e, value) => setTab(value)}
           value={tab}

@@ -16,6 +16,7 @@
     "standard": "^16.0.3",
     "tcollide": "0.2.1",
     "three": "<0.125.0",
+    "uuid": "^8.3.2",
     "web-vitals": "^1.0.1"
   },
   "scripts": {

@@ -3,7 +3,7 @@ import Box from '@material-ui/core/Box'
 import NumberProperty from './NumberProperty'
 import BooleanProperty from './BooleanProperty'
 
-function RoundBrush({
+function RoundBrush ({
   selection,
   data,
   onChange
