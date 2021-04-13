@@ -1,4 +1,4 @@
-import VectorProperty from './VectorProperty'
+import Vector3Property from './Vector3Property'
 
 function Rotation ({
   selection,
@@ -6,7 +6,7 @@ function Rotation ({
   onChange
 }) {
   return (
-    <VectorProperty
+    <Vector3Property
       prop='rotation'
       selection={selection}
       data={data}

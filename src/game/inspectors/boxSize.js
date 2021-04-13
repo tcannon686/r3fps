@@ -1,4 +1,4 @@
-import VectorProperty from './VectorProperty'
+import Vector3Property from './Vector3Property'
 
 function BoxSize ({
   selection,
@@ -6,7 +6,7 @@ function BoxSize ({
   onChange
 }) {
   return (
-    <VectorProperty
+    <Vector3Property
       prop='size'
       selection={selection}
       data={data}

@@ -1,4 +1,4 @@
-import VectorProperty from './VectorProperty'
+import Vector3Property from './Vector3Property'
 
 function Position ({
   selection,
@@ -6,7 +6,7 @@ function Position ({
   onChange
 }) {
   return (
-    <VectorProperty
+    <Vector3Property
       prop='position'
       selection={selection}
       data={data}

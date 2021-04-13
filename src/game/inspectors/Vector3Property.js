@@ -12,11 +12,12 @@ import {
   Vector3
 } from 'three'
 
-export default function VectorProperty ({
+export default function Vector3Property ({
   selection,
   data,
   onChange,
   prop,
+  label,
   defaultValue
 }) {
   const origin = useMemo(() => {
@@ -81,7 +82,7 @@ export default function VectorProperty ({
       {['x', 'y', 'z'].map((x, i) => (
         <Grid item key={x} xs={4}>
           <TextField
-            label={x.toUpperCase()}
+            label={(label ? label + ' ' : '') + x.toUpperCase()}
             variant='filled'
             value={pos[i]}
             onChange={(e) => setComponent(i, e.target.value)}

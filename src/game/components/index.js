@@ -4,6 +4,7 @@ import cylinder from './cylinder'
 import pointLight from './pointLight'
 import ambientLight from './ambientLight'
 import directionalLight from './directionalLight'
+import room from './room'
 
 const components = {
   box,
@@ -11,6 +12,7 @@ const components = {
   cylinder,
   pointLight,
   ambientLight,
-  directionalLight
+  directionalLight,
+  room
 }
 export default components

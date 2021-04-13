@@ -1,4 +1,4 @@
-import VectorProperty from './VectorProperty'
+import Vector3Property from './Vector3Property'
 
 function Scale ({
   selection,
@@ -6,7 +6,7 @@ function Scale ({
   onChange
 }) {
   return (
-    <VectorProperty
+    <Vector3Property
       prop='scale'
       selection={selection}
       data={data}
