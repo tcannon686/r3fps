@@ -38,7 +38,7 @@ function TranslateArrow ({
   const rotation = [
     Math.atan2(Math.sqrt(dx ** 2 + dz ** 2), dy),
     0,
-    Math.atan2(dx, dz)
+    Math.atan2(-dx, dz)
   ]
   const handlePointerOver = useCallback((...args) => {
     setIsHovering(true)
