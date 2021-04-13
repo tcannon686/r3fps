@@ -138,16 +138,16 @@ function makeSupportGeometry (support) {
     do {
       randomizeDirection(v)
       support(v)
-    } while (vertices.find(x => x.equals(v)))
+    } while (vertices.some(x => x.equals(v)))
     vertices.push(v)
   }
 
   {
     const v = new Vector3()
-    const t = makeTriangle(0, 2, 1, vertices)
+    const t = makeTriangle(0, 2, 1)
     v.copy(t.normal).negate()
     support(v)
-    if (vertices.find(x => x.equals(v))) {
+    if (vertices.some(x => x.equals(v))) {
       t.normal.negate()
       const tmp = vertices[0]
       vertices[0] = vertices[2]
@@ -155,11 +155,13 @@ function makeSupportGeometry (support) {
       v.copy(t.normal).negate()
       support(v)
     }
+
     vertices.push(v)
+
     triangles.push(t)
-    triangles.push(makeTriangle(0, 1, 3, vertices))
-    triangles.push(makeTriangle(1, 2, 3, vertices))
-    triangles.push(makeTriangle(2, 0, 3, vertices))
+    triangles.push(makeTriangle(0, 1, 3))
+    triangles.push(makeTriangle(1, 2, 3))
+    triangles.push(makeTriangle(2, 0, 3))
   }
 
   let done = false
@@ -171,7 +173,14 @@ function makeSupportGeometry (support) {
       const a = new Vector3().copy(triangle.normal)
       support(a)
 
-      if (a.dot(triangle.normal) - triangle.distance > tolerance) {
+      /*
+       * Add the vertex if we can expand more, and the vertex has not already
+       * been added.
+       */
+      if (
+        !vertices.some(x => a.equals(x)) &&
+        a.dot(triangle.normal) - triangle.distance > tolerance
+      ) {
         done = false
         for (let i = 0; i < triangles.length; i++) {
           const t = triangles[i]
@@ -197,8 +206,7 @@ function makeSupportGeometry (support) {
               makeTriangle(
                 e0,
                 e1,
-                vertices.length - 1,
-                vertices
+                vertices.length - 1
               )
             )
             triangles.push(tri)

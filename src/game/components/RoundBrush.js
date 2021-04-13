@@ -24,17 +24,21 @@ export default function RoundBrush ({
   const radius = roundRadius || 0.0
 
   const roundSupport = useMemo(() => (
-    flatTop
+    radius > 0
       ? (
-          flatBottom
-            ? circle({ radius })
-            : split(circle({ radius }), sphere({ radius }))
+          flatTop
+            ? (
+                flatBottom
+                  ? circle({ radius })
+                  : split(circle({ radius }), sphere({ radius }))
+              )
+            : (
+                flatBottom
+                  ? split(sphere({ radius }), circle({ radius }))
+                  : sphere({ radius })
+              )
         )
-      : (
-          flatBottom
-            ? split(sphere({ radius }), circle({ radius }))
-            : sphere({ radius })
-        )
+      : null
   ), [radius, flatTop, flatBottom])
 
   const newSupport = useMemo(() => (

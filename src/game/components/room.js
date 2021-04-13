@@ -87,7 +87,7 @@ function makeWallSupports ({
     topWallSize[1] -= doorSize[1]
     topWallSize[2 - axisIndex] = doorSize[0]
 
-    if (wallSize.every(x => x > 0)) {
+    if (wallSize.every(x => x > 0) && topWallSize.every(x => x > 0)) {
       return [
         box({
           position: position1,
@@ -120,7 +120,7 @@ function Room ({
   thickness = thickness || 0.1
   size = size || [1.0, 1.0, 1.0]
   const [sizeX, sizeY, sizeZ] = size
-  const defaultDoorSize = [0.5, 0.5]
+  const defaultDoorSize = useMemo(() => [0.5, 0.5], [])
 
   const doorOptions = useMemo(() => (
     [
