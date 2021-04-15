@@ -13,15 +13,15 @@ export default function Player (props) {
     position,
     ...rest
   } = props
-  const speed = 3
+  const speed = 4
   const jumpSpeed = 3
 
   const ref = useRef()
   const options = useMemo(() => ({
     supports: [
       hull(
-        sphere({ radius: 0.5 }),
-        sphere({ position: [0, -1, 0], radius: 0.5 })
+        sphere({ radius: 0.25 }),
+        sphere({ position: [0, -1, 0], radius: 0.25 })
       )
     ]
   }), [])
