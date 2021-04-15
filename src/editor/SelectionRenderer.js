@@ -49,16 +49,18 @@ export default function SelectionRenderer ({ selection }) {
     gl.autoClear = false
     gl.clear()
     gl.render(scene, camera)
-    const originalVisibles = scene.children.map(x => x.visible)
-    scene.children.forEach(x => {
-      x.visible = selection.has(x.userData.id)
-    })
-    scene.overrideMaterial = selectionMaterial
-    gl.render(scene, camera)
-    scene.children.forEach((x, i) => {
-      x.visible = originalVisibles[i]
-    })
-    scene.overrideMaterial = null
+    if (selection.size > 0) {
+      const originalVisibles = scene.children.map(x => x.visible)
+      scene.children.forEach(x => {
+        x.visible = selection.has(x.userData.id)
+      })
+      scene.overrideMaterial = selectionMaterial
+      gl.render(scene, camera)
+      scene.children.forEach((x, i) => {
+        x.visible = originalVisibles[i]
+      })
+      scene.overrideMaterial = null
+    }
   }, 1)
   return null
 }

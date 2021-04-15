@@ -40,25 +40,27 @@ export default forwardRef(({
     /* Update the camera. */
     ref.current.updateMatrixWorld()
     if (mode === 'fps') {
+      const totalSpeed = speed * (keyIsDown.current.Shift ? 4 : 1)
+      const position = rotationHelper.current.position
       ref.current.matrixWorld.extractBasis(right, up, forward)
       forward.negate()
       if (keyIsDown.current.E) {
-        rotationHelper.current.position.addScaledVector(up, dt * speed)
+        position.addScaledVector(up, dt * totalSpeed)
       }
       if (keyIsDown.current.Q) {
-        rotationHelper.current.position.addScaledVector(up, -dt * speed)
+        position.addScaledVector(up, -dt * totalSpeed)
       }
       if (keyIsDown.current.D) {
-        rotationHelper.current.position.addScaledVector(right, dt * speed)
+        position.addScaledVector(right, dt * totalSpeed)
       }
       if (keyIsDown.current.A) {
-        rotationHelper.current.position.addScaledVector(right, -dt * speed)
+        position.addScaledVector(right, -dt * totalSpeed)
       }
       if (keyIsDown.current.W) {
-        rotationHelper.current.position.addScaledVector(forward, dt * speed)
+        position.addScaledVector(forward, dt * totalSpeed)
       }
       if (keyIsDown.current.S) {
-        rotationHelper.current.position.addScaledVector(forward, -dt * speed)
+        position.addScaledVector(forward, -dt * totalSpeed)
       }
     }
   })
