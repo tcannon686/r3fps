@@ -19,6 +19,7 @@ import Drawer from '@material-ui/core/Drawer'
 import CssBaseline from '@material-ui/core/CssBaseline'
 
 /* Material UI icons. */
+import AddIcon from '@material-ui/icons/Add'
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 
@@ -107,18 +108,27 @@ function EditorSidebar ({ data, onChange, selection, camera }) {
       .then(data => onChange(data))
   }
 
+  const handleNew = () => {
+    onChange(scene({}))
+  }
+
   return (
     <Drawer variant='persistent' className={classes.drawer} open>
       <div className={classes.drawerContent}>
         <Toolbar>
-          <Tooltip title='Download' onClick={handleDownload}>
-            <Button>
-              <CloudDownloadIcon />
+          <Tooltip title='New'>
+            <Button onClick={handleNew}>
+              <AddIcon />
             </Button>
           </Tooltip>
           <Tooltip title='Upload'>
             <Button onClick={handleUpload}>
               <CloudUploadIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title='Download' onClick={handleDownload}>
+            <Button>
+              <CloudDownloadIcon />
             </Button>
           </Tooltip>
         </Toolbar>
