@@ -5,14 +5,13 @@ import { useBody, useContacts } from '../physics'
 import { useEventListener, useIsKeyDown } from '../hooks'
 import { Vector3 } from 'three'
 
-export default function Player (props) {
+export default function Player ({ position, rotation, ...rest }) {
+  position = position || [0, 0, 0]
+  rotation = rotation || [0, 0, 0]
+
   const camera = useRef()
   const rotationHelper = useRef()
   const { setDefaultCamera } = useThree()
-  const {
-    position,
-    ...rest
-  } = props
   const speed = 4
   const jumpSpeed = 3
 
@@ -32,6 +31,11 @@ export default function Player (props) {
     api.transform.setPosition(x, y, z)
     api.update()
   }, [api, x, y, z])
+
+  const [rx, ry, rz] = rotation
+  useEffect(() => {
+    rotationHelper.current.rotation.y = ry * Math.PI / 180
+  }, [rx, ry, rz])
 
   const contacts = useContacts(api)
 
@@ -90,8 +94,8 @@ export default function Player (props) {
     /* Jump. */
     if (keyIsDown.current[' ']) {
       if (
-        contacts.length > 0 &&
-        contacts.some(x => x.amount.y / x.amount.length() < -0.5)
+        contacts.current.length > 0 &&
+        contacts.current.some(x => x.amount.y / x.amount.length() < -0.5)
       ) {
         api.velocity.set(0, jumpSpeed, 0)
       }

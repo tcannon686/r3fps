@@ -1,7 +1,6 @@
 import {
   useEffect,
   useRef,
-  useState,
   useContext,
   createContext,
   useMemo
@@ -60,16 +59,17 @@ export function useBody (ref, options) {
 }
 
 export function useContacts (body) {
-  const [contacts, setContacts] = useState([])
+  const contacts = useRef([])
   useEffect(() => {
     const subscription = body.beginOverlap.subscribe((event) => {
-      contacts.push(event)
+      contacts.current.push(event)
     })
     return () => subscription.unsubscribe()
   }, [body, contacts])
   useEffect(() => {
     const subscription = body.endOverlap.subscribe((event) => {
-      setContacts(contacts.filter(x => x.other !== event.other))
+      const index = contacts.current.indexOf(event)
+      contacts.current.splice(index, 1)
     })
     return () => subscription.unsubscribe()
   }, [body, contacts])

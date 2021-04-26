@@ -1,5 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
+/* Utils. */
+import { makeArrowGeometry } from '../utils'
+
+const arrowGeometry = makeArrowGeometry()
+export function useArrowGeometry () {
+  return arrowGeometry
+}
+
 export function useEventListener (type, callback) {
   useEffect(() => {
     document.addEventListener(type, callback)

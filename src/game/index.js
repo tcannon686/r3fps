@@ -31,6 +31,10 @@ export function object ({ type, props }) {
 }
 
 export function Game ({ data }) {
+  const playerSpawn = data.objects.find(x => x.type === 'playerSpawn')
+  const playerPosition = playerSpawn.props.position
+  const playerRotation = playerSpawn.props.rotation
+
   return (
     <Canvas onClick={e => e.target.requestPointerLock()}>
       <PhysicsScene>
@@ -43,7 +47,7 @@ export function Game ({ data }) {
             />
           )
         })}
-        <Player position={[0, 0, 0]} />
+        <Player position={playerPosition} rotation={playerRotation} />
       </PhysicsScene>
     </Canvas>
   )

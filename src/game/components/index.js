@@ -5,8 +5,10 @@ import pointLight from './pointLight'
 import ambientLight from './ambientLight'
 import directionalLight from './directionalLight'
 import room from './room'
+import playerSpawn from './playerSpawn'
 
 const components = {
+  playerSpawn,
   box,
   sphere,
   cylinder,

@@ -16,10 +16,7 @@ import {
   Scene
 } from 'three'
 
-/* Utils. */
-import { makeArrowGeometry } from '../utils'
-
-const arrowGeometry = makeArrowGeometry()
+import { useArrowGeometry } from '../hooks'
 
 /*
  * An arrow in a single direction.
@@ -32,6 +29,7 @@ function TranslateArrow ({
   direction,
   ...rest
 }) {
+  const arrowGeometry = useArrowGeometry()
   const [isHovering, setIsHovering] = useState()
 
   const [dx, dy, dz] = direction
