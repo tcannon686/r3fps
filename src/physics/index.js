@@ -46,7 +46,9 @@ export function useBody (ref, options) {
   useEffect(() => {
     ref.current.matrixAutoUpdate = false
     const subscription = b.changed.subscribe(() => {
-      ref.current.matrix.copy(b.transform)
+      if (ref.current) {
+        ref.current.matrix.copy(b.transform)
+      }
     })
     s.add(b)
     return () => {

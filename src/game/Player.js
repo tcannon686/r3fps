@@ -1,9 +1,40 @@
+import { v4 as uuid } from 'uuid'
 import { sphere, hull } from 'tcollide'
 import { useThree, useFrame } from 'react-three-fiber'
-import { useCallback, useEffect, useRef, useMemo } from 'react'
+import { useCallback, useEffect, useRef, useMemo, useState } from 'react'
 import { useBody, useContacts } from '../physics'
 import { useEventListener, useIsKeyDown } from '../hooks'
 import { Vector3 } from 'three'
+
+function Snowball ({ position, direction, speed }) {
+  const ref = useRef()
+  const options = useMemo(() => ({
+    supports: [
+      sphere({ radius: 0.25 })
+    ]
+  }), [])
+  const api = useBody(ref, options)
+
+  const [x, y, z] = position
+  const [dx, dy, dz] = direction
+
+  useEffect(() => {
+    api.transform.setPosition(x + dx, y + dy, z + dz)
+    api.update()
+  }, [api, x, y, z, dx, dy, dz])
+
+  useEffect(() => {
+    api.velocity.set(dx * speed, dy * speed, dz * speed)
+    api.update()
+  }, [api, dx, dy, dz, speed])
+
+  return (
+    <mesh ref={ref} position={position}>
+      <sphereGeometry args={[0.25, 16, 8]} />
+      <meshStandardMaterial color={'white'} />
+    </mesh>
+  )
+}
 
 export default function Player ({ position, rotation, ...rest }) {
   position = position || [0, 0, 0]
@@ -25,6 +56,7 @@ export default function Player ({ position, rotation, ...rest }) {
     ]
   }), [])
   const api = useBody(ref, options)
+  const [bullets, setSnowballs] = useState([])
 
   const [x, y, z] = position
   useEffect(() => {
@@ -55,10 +87,23 @@ export default function Player ({ position, rotation, ...rest }) {
   const right = new Vector3()
   const up = new Vector3()
   const forward = new Vector3()
+  const cameraForward = new Vector3()
+
+  const handleMouseDown = () => {
+    setSnowballs([...bullets, {
+      key: uuid(),
+      position: [api.position.x, api.position.y, api.position.z],
+      direction: [cameraForward.x, cameraForward.y, cameraForward.z],
+      speed: 15
+    }].slice(-10))
+  }
+  useEventListener('mousedown', handleMouseDown)
 
   useFrame((state, dt) => {
     /* Update the camera. */
     camera.current.updateMatrixWorld()
+    cameraForward.setFromMatrixColumn(camera.current.matrixWorld, 2)
+    cameraForward.negate()
     rotationHelper.current.matrixWorld.extractBasis(right, up, forward)
     forward.negate()
     if (keyIsDown.current.E) {
@@ -103,10 +148,13 @@ export default function Player ({ position, rotation, ...rest }) {
   })
 
   return (
-    <group ref={ref} {...rest}>
-      <group ref={rotationHelper}>
-        <perspectiveCamera ref={camera} />
+    <>
+      <group ref={ref} {...rest}>
+        <group ref={rotationHelper}>
+          <perspectiveCamera ref={camera} />
+        </group>
       </group>
-    </group>
+      {bullets.map(props => <Snowball {...props} />)}
+    </>
   )
 }
