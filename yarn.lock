@@ -10837,10 +10837,10 @@ tar@^6.0.2:
     mkdirp "^1.0.3"
     yallist "^4.0.0"
 
-tcollide@0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/tcollide/-/tcollide-0.2.1.tgz#a0ecebba6d99fd0a43b05ec079c864e98f745d4b"
-  integrity sha512-BHtiDfIBFxWSi9Q9cFKwJsR78WmiAexKTrLRssfxvYQh3gdSiSYbIwt4PxkdvWLg8AcCvUOYmlpLaVsv7hmRoA==
+tcollide@0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/tcollide/-/tcollide-0.2.3.tgz#019133bf7c70116d8979ea5792cc90677fad50ea"
+  integrity sha512-+GmhA1jKclrNon6NJU2mqbT1vzaB0N9wWbAkToVujcaoIoqVHOYjdhbuf8HdX8WMFfCIMLca3ti72AeInwyvRA==
   dependencies:
     rxjs "^6.6.6"
     three "^0.125.2"
