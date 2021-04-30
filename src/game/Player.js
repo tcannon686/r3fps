@@ -31,7 +31,7 @@ function Snowball ({ position, direction, speed }) {
   return (
     <mesh ref={ref} position={position}>
       <sphereGeometry args={[0.25, 16, 8]} />
-      <meshStandardMaterial color={'white'} />
+      <meshStandardMaterial color='white' />
     </mesh>
   )
 }
@@ -73,7 +73,13 @@ export default function Player ({ position, rotation, ...rest }) {
 
   /* Handle mouselook. */
   const handleMouseMove = useCallback((e) => {
-    camera.current.rotation.x -= e.movementY * 0.005
+    const rx = camera.current.rotation.x
+    camera.current.rotation.x = Math.min(
+      Math.max(
+        rx - e.movementY * 0.005, -Math.PI / 2
+      ),
+      Math.PI / 2
+    )
     rotationHelper.current.rotation.y -= e.movementX * 0.005
   }, [])
   useEventListener('mousemove', handleMouseMove)
@@ -154,7 +160,9 @@ export default function Player ({ position, rotation, ...rest }) {
           <perspectiveCamera ref={camera} />
         </group>
       </group>
-      {bullets.map(props => <Snowball {...props} />)}
+      {bullets.map(({ key, ...props }) => (
+        <Snowball key={key} {...props} />
+      ))}
     </>
   )
 }
