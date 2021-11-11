@@ -10,6 +10,10 @@ arrows. You can enable physics for different brushes by unchecking _Kinematic_
 in the _Inspector_. You can also place a few different kinds of lights, and
 position them in the scene, and change their color.
 
+r3fps can load and save scenes, and is available in the browser! Try it out
+[here](https://tcannon686.github.io/r3fps). Some example scenes are available
+from the examples/scenes directory.
+
 ## Usage
 Set up using the guide below, then open up the project in a browser. You should
 be able to place objects by clicking them in the _Palette_ tab. Next, you can
@@ -18,7 +22,8 @@ _Inspector_ tab, or by moving them around with the arrows in the 3D view. Right
 click and drag in the 3D view to rotate the camera. While moving the camera, you
 can use WASD to move around, and E to move up and Q to move down. Press the
 Delete key to delete selected objects. You can also undo and redo by pressing
-Control-Z and Control-Shift-Z.
+Control-Z and Control-Shift-Z. You can play the scene by clicking the play
+button. Just be sure you add a player spawnpoint!
 
 ---
 # Getting Started with Create React App
