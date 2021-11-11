@@ -44,7 +44,9 @@ export function useBody (ref, options) {
   const s = useContext(PhysicsSceneContext)
 
   useEffect(() => {
-    ref.current.matrixAutoUpdate = false
+    if (ref.current) {
+      ref.current.matrixAutoUpdate = false
+    }
     const subscription = changed(b).subscribe(() => {
       if (ref.current) {
         ref.current.matrix.copy(b.transform)

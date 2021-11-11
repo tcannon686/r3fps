@@ -1,26 +1,26 @@
 import BooleanProperty from './BooleanProperty'
 
-function Body ({
+function Visibility ({
   selection,
   data,
   onChange
 }) {
   return (
     <BooleanProperty
-      prop='kinematic'
+      prop='visible'
       selection={selection}
       data={data}
       onChange={onChange}
-      label='Kinematic'
+      label='Visible'
       defaultValue
     />
   )
 }
 
-const body = {
-  key: 'body',
-  displayName: 'Body',
-  component: Body
+const visibility = {
+  key: 'visibility',
+  displayName: 'Visibility',
+  component: Visibility
 }
 
-export default body
+export default visibility

@@ -22,12 +22,15 @@ export default function Brush ({
   kinematic,
   userData,
   color,
+  visible,
+  inEditor,
   ...rest
 }) {
   /* Default values. */
   position = position || [0.0, 0.0, 0.0]
   rotation = rotation || [0.0, 0.0, 0.0]
   scale = scale || [1.0, 1.0, 1.0]
+  visible = visible === undefined ? true : visible
 
   const options = useMemo(() => ({
     supports: [support],
@@ -58,18 +61,22 @@ export default function Brush ({
 
   const geometry = useSupportGeometry(support)
 
-  return (
-    <mesh
-      ref={ref}
-      geometry={geometry}
-      position={position}
-      rotation={rotation}
-      scale={scale}
-      {...rest}
-    >
-      <meshStandardMaterial
-        color={color}
-      />
-    </mesh>
-  )
+  if (visible || inEditor) {
+    return (
+      <mesh
+        ref={ref}
+        geometry={geometry}
+        position={position}
+        rotation={rotation}
+        scale={scale}
+        {...rest}
+      >
+        <meshStandardMaterial
+          color={color}
+        />
+      </mesh>
+    )
+  } else {
+    return null
+  }
 }

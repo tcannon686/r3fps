@@ -4,9 +4,10 @@ import scale from './scale'
 import body from './body'
 import color from './color'
 import roundBrushInspector from './roundBrush'
+import visibility from './visibility'
 
 const transform = [position, rotation, scale]
-const brush = [position, rotation, scale, body, color]
+const brush = [position, rotation, scale, body, color, visibility]
 const roundBrush = [...brush, roundBrushInspector]
 const light = [position, color]
 
