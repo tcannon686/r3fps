@@ -19,6 +19,8 @@ import Drawer from '@material-ui/core/Drawer'
 import CssBaseline from '@material-ui/core/CssBaseline'
 
 /* Material UI icons. */
+import PlayArrowIcon from '@material-ui/icons/PlayArrow'
+import StopIcon from '@material-ui/icons/Stop'
 import AddIcon from '@material-ui/icons/Add'
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
@@ -32,7 +34,7 @@ import TabPanel from './TabPanel'
 import ThreeView from './ThreeView'
 
 /* Game. */
-import { scene, object } from '../game'
+import { Game, scene, object } from '../game'
 import components from '../game/components'
 
 /* Hooks. */
@@ -64,7 +66,15 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-function EditorSidebar ({ data, onChange, selection, camera }) {
+function EditorSidebar ({
+  data,
+  selection,
+  camera,
+  onChange,
+  onPlay,
+  onStop,
+  isPlaying
+}) {
   const classes = useStyles()
   const [tab, setTab] = useState(0)
 
@@ -131,6 +141,13 @@ function EditorSidebar ({ data, onChange, selection, camera }) {
               <CloudDownloadIcon />
             </Button>
           </Tooltip>
+          <Tooltip title={isPlaying ? 'Stop' : 'Play'}>
+            <Button onClick={isPlaying ? onStop : onPlay}>
+              {isPlaying
+                ? (<StopIcon />)
+                : (<PlayArrowIcon />)}
+            </Button>
+          </Tooltip>
         </Toolbar>
         <Tabs
           onChange={(e, value) => setTab(value)}
@@ -151,10 +168,11 @@ function EditorSidebar ({ data, onChange, selection, camera }) {
   )
 }
 
-export function Editor () {
+export function Editor (props) {
   const [data, pushData, undo, redo, setData] = useUndoable(() => scene({}))
   const [selection, setSelection] = useState(new Set())
   const [clipboardData, setClipboardData] = useState([])
+  const [isPlaying, setIsPlaying] = useState(false)
 
   const classes = useStyles()
   const cameraRef = useRef()
@@ -197,16 +215,25 @@ export function Editor () {
         selection={selection}
         onChange={handleEdit}
         camera={cameraRef}
+        isPlaying={isPlaying}
+        onPlay={() => { setIsPlaying(true) }}
+        onStop={() => { setIsPlaying(false) }}
       />
       <main className={classes.content}>
-        <ThreeView
-          cameraRef={cameraRef}
-          data={data}
-          selection={selection}
-          onSelectionChange={setSelection}
-          onChange={handleChange}
-          onEdit={handleEdit}
-        />
+        {isPlaying
+          ? (
+            <Game data={data} />
+            )
+          : (
+            <ThreeView
+              cameraRef={cameraRef}
+              data={data}
+              selection={selection}
+              onSelectionChange={setSelection}
+              onChange={handleChange}
+              onEdit={handleEdit}
+            />
+            )}
       </main>
     </div>
   )

@@ -1,11 +1,10 @@
 import './App.css'
-import { Game } from './game'
-import buildings from './game/scenes/buildings.json'
+import { Editor } from './editor'
 
 function App () {
   return (
     <div className='App'>
-      <Game data={buildings} />
+      <Editor />
     </div>
   )
 }
