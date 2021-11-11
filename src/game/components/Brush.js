@@ -24,6 +24,7 @@ export default function Brush ({
   color,
   visible,
   inEditor,
+  enableBody,
   ...rest
 }) {
   /* Default values. */
@@ -38,7 +39,7 @@ export default function Brush ({
   }), [support, kinematic])
 
   const ref = useRef()
-  const api = useBody(ref, options)
+  const api = useBody(ref, options, enableBody)
 
   const [rx, ry, rz] = rotation
   const [sx, sy, sz] = scale

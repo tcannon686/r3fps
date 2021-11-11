@@ -39,7 +39,7 @@ export function PhysicsScene ({ children }) {
   )
 }
 
-export function useBody (ref, options) {
+export function useBody (ref, options, isEnabled = true) {
   const b = useMemo(() => body(options), [options])
   const s = useContext(PhysicsSceneContext)
 
@@ -52,12 +52,16 @@ export function useBody (ref, options) {
         ref.current.matrix.copy(b.transform)
       }
     })
-    s.add(b)
+    if (isEnabled) {
+      s.add(b)
+    }
     return () => {
       subscription.unsubscribe()
-      s.remove(b)
+      if (isEnabled) {
+        s.remove(b)
+      }
     }
-  }, [b, s, ref])
+  }, [b, s, ref, isEnabled])
 
   return b
 }

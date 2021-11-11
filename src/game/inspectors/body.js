@@ -1,3 +1,5 @@
+import Box from '@material-ui/core/Box'
+
 import BooleanProperty from './BooleanProperty'
 
 function Body ({
@@ -6,14 +8,24 @@ function Body ({
   onChange
 }) {
   return (
-    <BooleanProperty
-      prop='kinematic'
-      selection={selection}
-      data={data}
-      onChange={onChange}
-      label='Kinematic'
-      defaultValue
-    />
+    <Box>
+      <BooleanProperty
+        prop='kinematic'
+        selection={selection}
+        data={data}
+        onChange={onChange}
+        label='Kinematic'
+        defaultValue
+      />
+      <BooleanProperty
+        prop='enableBody'
+        selection={selection}
+        data={data}
+        onChange={onChange}
+        label='Enable'
+        defaultValue
+      />
+    </Box>
   )
 }
 
