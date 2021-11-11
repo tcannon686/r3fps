@@ -8,7 +8,7 @@ import {
 
 import { useFrame } from 'react-three-fiber'
 
-import { scene, body } from 'tcollide'
+import { scene, body, beginOverlap, endOverlap, changed } from 'tcollide'
 
 import {
   Vector3,
@@ -45,7 +45,7 @@ export function useBody (ref, options) {
 
   useEffect(() => {
     ref.current.matrixAutoUpdate = false
-    const subscription = b.changed.subscribe(() => {
+    const subscription = changed(b).subscribe(() => {
       if (ref.current) {
         ref.current.matrix.copy(b.transform)
       }
@@ -63,13 +63,13 @@ export function useBody (ref, options) {
 export function useContacts (body) {
   const contacts = useRef([])
   useEffect(() => {
-    const subscription = body.beginOverlap.subscribe((event) => {
+    const subscription = beginOverlap(body).subscribe((event) => {
       contacts.current.push(event)
     })
     return () => subscription.unsubscribe()
   }, [body, contacts])
   useEffect(() => {
-    const subscription = body.endOverlap.subscribe((event) => {
+    const subscription = endOverlap(body).subscribe((event) => {
       const index = contacts.current.indexOf(event)
       contacts.current.splice(index, 1)
     })
