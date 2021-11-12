@@ -73,14 +73,16 @@ export default function Player ({ position, rotation, ...rest }) {
 
   /* Handle mouselook. */
   const handleMouseMove = useCallback((e) => {
-    const rx = camera.current.rotation.x
-    camera.current.rotation.x = Math.min(
-      Math.max(
-        rx - e.movementY * 0.005, -Math.PI / 2
-      ),
-      Math.PI / 2
-    )
-    rotationHelper.current.rotation.y -= e.movementX * 0.005
+    if (camera.current) {
+      const rx = camera.current.rotation.x
+      camera.current.rotation.x = Math.min(
+        Math.max(
+          rx - e.movementY * 0.005, -Math.PI / 2
+        ),
+        Math.PI / 2
+      )
+      rotationHelper.current.rotation.y -= e.movementX * 0.005
+    }
   }, [])
   useEventListener('mousemove', handleMouseMove)
 

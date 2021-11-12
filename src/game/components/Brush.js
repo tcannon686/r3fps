@@ -1,7 +1,8 @@
 import {
   useEffect,
   useRef,
-  useMemo
+  useMemo,
+  forwardRef
 } from 'react'
 
 import {
@@ -14,6 +15,19 @@ import {
   Euler
 } from 'three'
 
+import Model from './Model'
+
+const SupportGeometry = forwardRef(({ support, ...rest }, ref) => {
+  const geometry = useSupportGeometry(support)
+  return (
+    <mesh
+      ref={ref}
+      geometry={geometry}
+      {...rest}
+    />
+  )
+})
+
 export default function Brush ({
   support,
   position,
@@ -25,6 +39,7 @@ export default function Brush ({
   visible,
   inEditor,
   enableBody,
+  modelUrl,
   ...rest
 }) {
   /* Default values. */
@@ -60,22 +75,32 @@ export default function Brush ({
     api.update()
   }, [api, x, y, z, rx, ry, rz, sx, sy, sz])
 
-  const geometry = useSupportGeometry(support)
-
   if (visible || inEditor) {
     return (
-      <mesh
+      <group
         ref={ref}
-        geometry={geometry}
         position={position}
         rotation={rotation}
         scale={scale}
-        {...rest}
       >
-        <meshStandardMaterial
-          color={color}
-        />
-      </mesh>
+        {modelUrl && (
+          <Model
+            support={support}
+            url={modelUrl}
+            {...rest}
+          />
+        )}
+        {(!modelUrl || inEditor) && (
+          <SupportGeometry
+            support={support}
+            {...rest}
+          >
+            <meshStandardMaterial
+              color={color}
+            />
+          </SupportGeometry>
+        )}
+      </group>
     )
   } else {
     return null

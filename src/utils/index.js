@@ -55,3 +55,9 @@ export function upload () {
     document.body.removeChild(element)
   })
 }
+
+export function getBaseUrl () {
+  const loc = window.location
+  const baseUrl = `${loc.protocol}/${loc.host}/${loc.pathname.split('/')[1]}`
+  return baseUrl
+}
