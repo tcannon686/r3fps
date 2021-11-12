@@ -99,6 +99,7 @@ function makeSupportGeometry (support) {
   const geometry = new BufferGeometry()
 
   const tolerance = 0.01
+  const maxVertices = 4096
 
   const triangles = []
   const vertices = []
@@ -188,6 +189,7 @@ function makeSupportGeometry (support) {
       if (
         !vertices.some(x => a.equals(x)) &&
         a.dot(triangle.normal) - triangle.distance > tolerance
+        && vertices.length < maxVertices
       ) {
         done = false
         for (let i = 0; i < triangles.length; i++) {
