@@ -11,12 +11,13 @@ import {
 
 /* Material UI components. */
 import Button from '@material-ui/core/Button'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import Drawer from '@material-ui/core/Drawer'
+import Snackbar from '@material-ui/core/Snackbar'
+import Tab from '@material-ui/core/Tab'
+import Tabs from '@material-ui/core/Tabs'
 import Toolbar from '@material-ui/core/Toolbar'
 import Tooltip from '@material-ui/core/Tooltip'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
-import Drawer from '@material-ui/core/Drawer'
-import CssBaseline from '@material-ui/core/CssBaseline'
 
 /* Material UI icons. */
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
@@ -173,6 +174,7 @@ export function Editor (props) {
   const [selection, setSelection] = useState(new Set())
   const [clipboardData, setClipboardData] = useState([])
   const [isPlaying, setIsPlaying] = useState(false)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const classes = useStyles()
   const cameraRef = useRef()
@@ -185,6 +187,16 @@ export function Editor (props) {
   /* When an edit is made, update the undo history. */
   const handleEdit = (newData) => {
     pushData(newData)
+  }
+
+  /* When the user clicks the play button. */
+  const handlePlay = () => {
+    const playerSpawn = data.objects.find(x => x.type === 'playerSpawn')
+    if (playerSpawn) {
+      setIsPlaying(true)
+    } else {
+      setErrorMessage('You need to place a spawnpoint first!')
+    }
   }
 
   const selectedObjects = data.objects.filter(x => selection.has(x.id))
@@ -216,7 +228,7 @@ export function Editor (props) {
         onChange={handleEdit}
         camera={cameraRef}
         isPlaying={isPlaying}
-        onPlay={() => { setIsPlaying(true) }}
+        onPlay={handlePlay}
         onStop={() => { setIsPlaying(false) }}
       />
       <main className={classes.content}>
@@ -234,6 +246,11 @@ export function Editor (props) {
               onEdit={handleEdit}
             />
             )}
+        <Snackbar
+          open={!!errorMessage}
+          onClose={() => { setErrorMessage(null) }}
+          message={errorMessage}
+        />
       </main>
     </div>
   )
