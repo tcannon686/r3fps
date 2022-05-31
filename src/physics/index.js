@@ -188,8 +188,8 @@ function makeSupportGeometry (support) {
        */
       if (
         !vertices.some(x => a.equals(x)) &&
-        a.dot(triangle.normal) - triangle.distance > tolerance
-        && vertices.length < maxVertices
+        a.dot(triangle.normal) - triangle.distance > tolerance &&
+        vertices.length < maxVertices
       ) {
         done = false
         for (let i = 0; i < triangles.length; i++) {
