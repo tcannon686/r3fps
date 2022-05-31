@@ -77,11 +77,11 @@ export default function Player ({ position, rotation, ...rest }) {
       const rx = camera.current.rotation.x
       camera.current.rotation.x = Math.min(
         Math.max(
-          rx - e.movementY * 0.005, -Math.PI / 2
+          rx - e.movementY * 0.0025, -Math.PI / 2
         ),
         Math.PI / 2
       )
-      rotationHelper.current.rotation.y -= e.movementX * 0.005
+      rotationHelper.current.rotation.y -= e.movementX * 0.0025
     }
   }, [])
   useEventListener('mousemove', handleMouseMove)

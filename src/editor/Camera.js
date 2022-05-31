@@ -15,8 +15,8 @@ export default forwardRef(({
   /* Handle mouselook. */
   const handleMouseMove = useCallback((e) => {
     if (mode === 'fps') {
-      ref.current.rotation.x -= e.movementY * 0.005
-      rotationHelper.current.rotation.y -= e.movementX * 0.005
+      ref.current.rotation.x -= e.movementY * 0.0025
+      rotationHelper.current.rotation.y -= e.movementX * 0.0025
     }
   }, [mode, ref])
   useEventListener('mousemove', handleMouseMove)
