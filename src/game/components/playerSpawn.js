@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { hull, sphere } from 'tcollide'
+import { circle, hull } from 'tcollide'
 import position from '../inspectors/position'
 import rotation from '../inspectors/rotation'
 import { useSupportGeometry } from '../../physics'
@@ -11,8 +11,8 @@ function PlayerSpawnPreview ({ color, position, rotation }) {
   const arrowGeometry = useArrowGeometry()
   const support = useMemo(() => (
     hull(
-      sphere({ radius: 0.25 }),
-      sphere({ position: [0, -1, 0], radius: 0.25 })
+      circle({ position: [0, 0.25, 0], radius: 0.25 }),
+      circle({ position: [0, -1.25, 0], radius: 0.25 })
     )
   ), [])
   const geometry = useSupportGeometry(support)

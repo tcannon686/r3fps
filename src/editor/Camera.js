@@ -67,7 +67,7 @@ export default forwardRef(({
 
   return (
     <group ref={rotationHelper}>
-      <perspectiveCamera ref={ref} />
+      <perspectiveCamera ref={ref} fov={75.0} />
     </group>
   )
 })

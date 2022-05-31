@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid'
-import { sphere, hull } from 'tcollide'
+import { sphere, circle, hull } from 'tcollide'
 import { useThree, useFrame } from 'react-three-fiber'
 import { useCallback, useEffect, useRef, useMemo, useState } from 'react'
 import { useBody, useContacts } from '../physics'
@@ -43,15 +43,15 @@ export default function Player ({ position, rotation, ...rest }) {
   const camera = useRef()
   const rotationHelper = useRef()
   const { setDefaultCamera } = useThree()
-  const speed = 4
+  const speed = 5
   const jumpSpeed = 3
 
   const ref = useRef()
   const options = useMemo(() => ({
     supports: [
       hull(
-        sphere({ radius: 0.25 }),
-        sphere({ position: [0, -1, 0], radius: 0.25 })
+        circle({ position: [0, 0.25, 0], radius: 0.25 }),
+        circle({ position: [0, -1.25, 0], radius: 0.25 })
       )
     ]
   }), [])
@@ -159,7 +159,7 @@ export default function Player ({ position, rotation, ...rest }) {
     <>
       <group ref={ref} {...rest}>
         <group ref={rotationHelper}>
-          <perspectiveCamera ref={camera} />
+          <perspectiveCamera ref={camera} fov={75} />
         </group>
       </group>
       {bullets.map(({ key, ...props }) => (
