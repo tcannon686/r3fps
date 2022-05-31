@@ -46,7 +46,6 @@ export default function SelectionRenderer ({ selection }) {
   const selectionMaterial = useSelectionMaterial()
 
   useFrame(({ gl, scene, camera }) => {
-    gl.autoClear = false
     gl.clear()
     gl.render(scene, camera)
     if (selection.size > 0) {
@@ -61,6 +60,7 @@ export default function SelectionRenderer ({ selection }) {
       })
       scene.overrideMaterial = null
     }
+    gl.autoClear = false
   }, 1)
   return null
 }
